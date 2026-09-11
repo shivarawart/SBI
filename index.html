@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SBI – Smart Banking India</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              sbi: {
+                blue: "#0b3a8f",      // primary brand blue
+                navy: "#08255f",      // darker blue
+                green: "#16a34a",     // growth / success
+                light: "#f5f9ff",     // very light blue background
+                gray: "#6b7280",      // secondary text
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      html, body {
+        background: #ffffff;
+        color: #0b1220;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
+
+      .hero-bg {
+        background: linear-gradient(180deg, #f5f9ff 0%, #ffffff 100%);
+      }
+
+      .section-alt {
+        background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%);
+      }
+
+      .card {
+        background: #ffffff;
+        border: 1px solid #e5eef9;
+        box-shadow: 0 10px 30px rgba(11, 58, 143, 0.06);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #0b3a8f 0%, #08255f 100%);
+        color: #ffffff;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        box-shadow: 0 15px 35px rgba(11, 58, 143, 0.25);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.06);
+        box-shadow: 0 20px 45px rgba(11, 58, 143, 0.35);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: #0b3a8f;
+        border: 2px solid #0b3a8f;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      }
+
+      .btn-outline:hover {
+        background: #0b3a8f;
+        color: #ffffff;
+        transform: translateY(-2px);
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
+        border: 1px solid #dbe7f7;
+        box-shadow: 0 15px 40px rgba(11, 58, 143, 0.08);
+      }
+
+      .feature-icon {
+        background: linear-gradient(135deg, #0b3a8f 0%, #16a34a 100%);
+        color: #ffffff;
+      }
+
+      /* Map / image container */
+      .image-section {
+        position: relative;
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .main-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 16px;
+        box-shadow: 0 30px 70px rgba(11, 58, 143, 0.18);
+      }
+
+      /* Floating badge */
+      .float-badge {
+        position: absolute;
+        background: #ffffff;
+        border: 2px solid #0b3a8f;
+        border-radius: 14px;
+        padding: 12px 16px;
+        box-shadow: 0 20px 50px rgba(11, 58, 143, 0.25);
+        min-width: 180px;
+      }
+
+      .map-marker {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #16a34a;
+        border: 3px solid #ffffff;
+        box-shadow: 0 10px 25px rgba(22, 163, 74, 0.5);
+        position: absolute;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+      }
+
+      .map-marker:hover {
+        background: #14532d;
+        transform: translate(-50%, -50%) scale(1.15);
+      }
+
+      .counter-pill {
+        background: linear-gradient(135deg, #0b3a8f, #16a34a);
+        color: #ffffff;
+        font-weight: 800;
+        border-radius: 9999px;
+        padding: 8px 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 15px 35px rgba(11, 58, 143, 0.3);
+      }
+
+      .section-title {
+        background: linear-gradient(90deg, #0b3a8f, #16a34a);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      /* Subtle background blobs */
+      .bg-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(70px);
+        opacity: 0.25;
+        z-index: -1;
+      }
+    </style>
+  </head>
+  <body class="font-sans">
+    <!-- Background blobs -->
+    <div class="bg-blob bg-blue-200 w-80 h-80 top-0 left-0"></div>
+    <div class="bg-blob bg-green-200 w-72 h-72 bottom-0 right-0"></div>
+    <div class="bg-blob bg-blue-100 w-64 h-64 top-1/3 right-1/4"></div>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-blue-100">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg feature-icon flex items-center justify-center font-black">
+            S
+          </div>
+          <span class="text-xl font-extrabold text-sbi-blue">SBI</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-sbi-gray">
+          <a href="#features" class="hover:text-sbi-blue transition-colors">Features</a>
+          <a href="#network" class="hover:text-sbi-blue transition-colors">Network</a>
+          <a href="#join" class="hover:text-sbi-blue transition-colors">Join</a>
+          <a href="#contact" class="hover:text-sbi-blue transition-colors">Contact</a>
+        </div>
+        <!-- <button class="btn-primary px-5 py-2.5 rounded-xl text-sm">
+          Internet Banking
+        </button> -->
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-bg pt-16 pb-20 md:pt-24 md:pb-28">
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 counter-pill mb-4">
+            <span class="text-xs uppercase tracking-wide">Trusted by</span>
+            <span id="heroCounter" class="text-sm">0</span>
+            <span class="text-xs">customers</span>
+          </div>
+          <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-sbi-navy">
+            Banking Built for
+            <span class="section-title"> Modern India</span>
+          </h1>
+          <p class="mt-4 text-base md:text-lg text-sbi-gray max-w-xl">
+            Experience fast, secure, and simple banking with SBI. From savings to loans, manage everything in one place with a design you’ll love.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <button class="btn-primary px-7 py-3.5 rounded-xl text-base">
+              Open an Account
+            </button>
+            <button class="btn-outline px-7 py-3.5 rounded-xl text-base">
+              Explore Services
+            </button>
+          </div>
+          <div class="mt-8 flex items-center gap-6 text-sm text-sbi-gray">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-sbi-green"></div>
+              <span>24x7 Support</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-sbi-green"></div>
+              <span>Secure & Encrypted</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="image-section">
+          <!-- Different image: modern banking / digital lifestyle -->
+          <img
+            id="heroImage"
+            class="main-image"
+            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1600&auto=format&fit=crop"
+            alt="Digital banking on laptop and phone"
+          />
+
+          <!-- Floating badges -->
+          <div class="float-badge" style="top: 10%; left: 5%;">
+            <div class="text-xs text-sbi-gray uppercase tracking-wide">Digital First</div>
+            <div class="text-sm font-bold text-sbi-blue">100% Online</div>
+          </div>
+
+          <div class="float-badge" style="bottom: 12%; right: 4%;">
+            <div class="text-xs text-sbi-gray uppercase tracking-wide">Customers</div>
+            <div class="text-sm font-bold text-sbi-blue" id="badgeCounter">0</div>
+          </div>
+
+          <!-- Map markers on image (decorative) -->
+          <div class="map-marker" style="top: 25%; left: 30%;" title="North"></div>
+          <div class="map-marker" style="top: 45%; left: 55%;" title="Central"></div>
+          <div class="map-marker" style="top: 65%; left: 40%;" title="South"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="section-alt py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div class="stat-card rounded-2xl p-6 text-center">
+            <div id="stat1" class="text-3xl md:text-4xl font-black text-sbi-blue">0</div>
+            <div class="text-sm text-sbi-gray mt-1">Branches</div>
+          </div>
+          <div class="stat-card rounded-2xl p-6 text-center">
+            <div id="stat2" class="text-3xl md:text-4xl font-black text-sbi-blue">0</div>
+            <div class="text-sm text-sbi-gray mt-1">ATMs</div>
+          </div>
+          <div class="stat-card rounded-2xl p-6 text-center">
+            <div id="stat3" class="text-3xl md:text-4xl font-black text-sbi-blue">0</div>
+            <div class="text-sm text-sbi-gray mt-1">Cities</div>
+          </div>
+          <div class="stat-card rounded-2xl p-6 text-center">
+            <div id="stat4" class="text-3xl md:text-4xl font-black text-sbi-blue">0</div>
+            <div class="text-sm text-sbi-gray mt-1">Million Customers</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto">
+          <h2 class="text-3xl md:text-5xl font-extrabold text-sbi-navy">
+            Everything You Need in One Bank
+          </h2>
+          <p class="mt-3 text-sbi-gray">
+            From everyday banking to big life goals, SBI gives you tools that are simple, powerful, and secure.
+          </p>
+        </div>
+
+        <div class="mt-12 grid md:grid-cols-3 gap-6">
+          <!-- Feature 1 -->
+          <div class="card rounded-2xl p-6">
+            <div class="w-12 h-12 rounded-xl feature-icon flex items-center justify-center font-black">
+              1
+            </div>
+            <h3 class="mt-4 text-xl font-bold text-sbi-navy">Instant Account Opening</h3>
+            <p class="mt-2 text-sm text-sbi-gray">
+              Open your savings account in minutes with minimal documents and video KYC.
+            </p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="card rounded-2xl p-6">
+            <div class="w-12 h-12 rounded-xl feature-icon flex items-center justify-center font-black">
+              2
+            </div>
+            <h3 class="mt-4 text-xl font-bold text-sbi-navy">Smart Mobile Banking</h3>
+            <p class="mt-2 text-sm text-sbi-gray">
+              Transfer, pay bills, invest, and track spending from a clean, intuitive mobile app.
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="card rounded-2xl p-6">
+            <div class="w-12 h-12 rounded-xl feature-icon flex items-center justify-center font-black">
+              3
+            </div>
+            <h3 class="mt-4 text-xl font-bold text-sbi-navy">Loans Made Simple</h3>
+            <p class="mt-2 text-sm text-sbi-gray">
+              Personal, home, and education loans with transparent rates and quick approvals.
+            </p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="card rounded-2xl p-6">
+            <div class="w-12 h-12 rounded-xl feature-icon flex items-center justify-center font-black">
+              4
+            </div>
+            <h3 class="mt-4 text-xl font-bold text-sbi-navy">Secure Transactions</h3>
+            <p class="mt-2 text-sm text-sbi-gray">
+              Bank-grade security, two-factor authentication, and real-time fraud monitoring.
+            </p>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="card rounded-2xl p-6">
+            <div class="w-12 h-12 rounded-xl feature-icon flex items-center justify-center font-black">
+              5
+            </div>
+            <h3 class="mt-4 text-xl font-bold text-sbi-navy">24x7 Support</h3>
+            <p class="mt-2 text-sm text-sbi-gray">
+              Get help anytime via chat, call, or email with dedicated support for customers.
+            </p>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="card rounded-2xl p-6">
+            <div class="w-12 h-12 rounded-xl feature-icon flex items-center justify-center font-black">
+              6
+            </div>
+            <h3 class="mt-4 text-xl font-bold text-sbi-navy">Investment & Wealth</h3>
+            <p class="mt-2 text-sm text-sbi-gray">
+              Mutual funds, fixed deposits, and insurance to grow and protect your money.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Network / Map Section with Counter -->
+    <section id="network" class="section-alt py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 items-center">
+        <div class="image-section">
+          <!-- Different image: India / network / people -->
+          <img
+            id="networkImage"
+            class="main-image"
+            src="https://th.bing.com/th/id/R.b5ac49b7926e57d6d70e806cd72878a4?rik=2kw57S6lNWBrjg&riu=http%3a%2f%2f4.bp.blogspot.com%2f-T55OH5vbeGY%2fTsj__DKRPyI%2fAAAAAAAACPk%2fwJ4IrPdDVpY%2fs1600%2fScreen%252Bshot%252B2011-11-20%252Bat%252B1.24.53%252BPM.png&ehk=J7oAVuAl8Y1PdzaDJd%2f3AFtiyCYq%2bdiVV1xKwQbuEXw%3d&risl=&pid=ImgRaw&r=0"
+            alt="India network and people"
+          />
+
+          <!-- Markers -->
+          <div id="networkMarkers" class="absolute inset-0">
+            <!-- Markers injected via JS -->
+          </div>
+
+          <div class="float-badge" style="top: 8%; right: 6%;">
+            <div class="text-xs text-sbi-gray uppercase tracking-wide">Pan-India</div>
+            <div class="text-sm font-bold text-sbi-blue">Presence</div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-3xl md:text-5xl font-extrabold text-sbi-navy">
+            A Network Across India
+          </h2>
+          <p class="mt-3 text-sbi-gray">
+            From metros to small towns, SBI is there when you need it. Tap into a massive network of branches, ATMs, and digital services.
+          </p>
+
+          <div class="mt-6 flex items-center gap-3">
+            <div class="counter-pill">
+              <span class="text-xs">Joined</span>
+              <span id="networkCounter" class="text-sm">0</span>
+              <span class="text-xs">people</span>
+            </div>
+            <span class="text-xs text-sbi-gray">and growing every second</span>
+          </div>
+
+          <form id="joinForm" class="mt-6 space-y-3">
+            <div>
+              <label for="nameInput" class="block text-sm font-semibold text-sbi-navy mb-1">
+                Your Name
+              </label>
+              <input
+                id="nameInput"
+                name="name"
+                type="text"
+                required
+                placeholder="e.g. Priya Verma"
+                class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sbi-navy placeholder-sbi-gray focus:outline-none focus:border-sbi-blue focus:ring-4 focus:ring-blue-100 transition"
+              />
+            </div>
+            <button type="submit" class="btn-primary w-full rounded-xl px-6 py-3 text-base">
+              Join the Network
+            </button>
+          </form>
+          <p id="formMessage" class="mt-2 text-sm font-semibold"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="join" class="py-16 md:py-24">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="card rounded-3xl p-8 md:p-12 text-center">
+          <h2 class="text-3xl md:text-5xl font-extrabold text-sbi-navy">
+            Ready to Bank Smarter?
+          </h2>
+          <p class="mt-3 text-sbi-gray max-w-2xl mx-auto">
+            Join millions of Indians who trust SBI for their everyday banking and long-term goals.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+            <button class="btn-primary px-8 py-4 rounded-xl text-base">
+              Open Savings Account
+            </button>
+            <button class="btn-outline px-8 py-4 rounded-xl text-base">
+              Talk to an Expert
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-alt py-16 md:py-24">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center">
+          <h2 class="text-3xl md:text-5xl font-extrabold text-sbi-navy">
+            Get in Touch
+          </h2>
+          <p class="mt-3 text-sbi-gray">
+            Have questions? Our team is here to help you choose the right products and services.
+          </p>
+        </div>
+
+        <form class="mt-10 card rounded-2xl p-6 md:p-8 space-y-4">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold text-sbi-navy mb-1">Name</label>
+              <input
+                type="text"
+                class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sbi-navy placeholder-sbi-gray focus:outline-none focus:border-sbi-blue focus:ring-4 focus:ring-blue-100 transition"
+                placeholder="Your full name"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-sbi-navy mb-1">Email</label>
+              <input
+                type="email"
+                class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sbi-navy placeholder-sbi-gray focus:outline-none focus:border-sbi-blue focus:ring-4 focus:ring-blue-100 transition"
+                placeholder="you@example.com"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-sbi-navy mb-1">Message</label>
+            <textarea
+              rows="4"
+              class="w-full rounded-xl border border-blue-200 px-4 py-3 text-sbi-navy placeholder-sbi-gray focus:outline-none focus:border-sbi-blue focus:ring-4 focus:ring-blue-100 transition"
+              placeholder="How can we help you?"
+            ></textarea>
+          </div>
+          <button type="button" class="btn-primary px-7 py-3.5 rounded-xl text-base">
+            Send Message
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-sbi-navy text-white py-10">
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8 text-sm">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-9 h-9 rounded-lg bg-white text-sbi-navy flex items-center justify-center font-black">
+              S
+            </div>
+            <span class="text-lg font-extrabold">SBI</span>
+          </div>
+          <p class="text-blue-200">
+            Smart Banking India – built for speed, security, and simplicity.
+          </p>
+        </div>
+        <div>
+          <div class="font-bold mb-2">Products</div>
+          <ul class="space-y-1 text-blue-200">
+            <li>Savings Account</li>
+            <li>Current Account</li>
+            <li>Personal Loan</li>
+            <li>Home Loan</li>
+          </ul>
+        </div>
+        <div>
+          <div class="font-bold mb-2">Support</div>
+          <ul class="space-y-1 text-blue-200">
+            <li>Help Center</li>
+            <li>Contact Us</li>
+            <li>Security</li>
+            <li>Privacy Policy</li>
+          </ul>
+        </div>
+        <div>
+          <div class="font-bold mb-2">Connect</div>
+          <ul class="space-y-1 text-blue-200">
+            <li>Twitter</li>
+            <li>Instagram</li>
+            <li>LinkedIn</li>
+            <li>Facebook</li>
+          </ul>
+        </div>
+      </div>
+      <div class="max-w-7xl mx-auto px-6 mt-8 pt-6 border-t border-blue-900 text-blue-300 text-xs">
+        © 2026 Smart Banking India (SBI). All rights reserved.
+      </div>
+    </footer>
+
+    <script>
+      // Register ScrollTrigger
+      gsap.registerPlugin(ScrollTrigger);
+
+      // -------------------------
+      // Counters (simulated)
+      // -------------------------
+      const STORAGE_KEY = "sbi_join_counter_v1";
+
+      function getCount() {
+        const val = localStorage.getItem(STORAGE_KEY);
+        return val ? parseInt(val, 10) : 1200000; // start with a base number
+      }
+
+      function setCount(n) {
+        localStorage.setItem(STORAGE_KEY, String(n));
+      }
+
+      const heroCounter = document.getElementById("heroCounter");
+      const badgeCounter = document.getElementById("badgeCounter");
+      const networkCounter = document.getElementById("networkCounter");
+
+      function formatNumber(n) {
+        if (n >= 1000000) {
+          return (n / 1000000).toFixed(1) + "M";
+        }
+        if (n >= 1000) {
+          return (n / 1000).toFixed(0) + "K";
+        }
+        return String(n);
+      }
+
+      function updateCounters(n) {
+        const formatted = formatNumber(n);
+        heroCounter.textContent = formatted;
+        badgeCounter.textContent = formatted;
+        networkCounter.textContent = formatted;
+      }
+
+      function incrementCounter() {
+        let n = getCount();
+        n += Math.floor(Math.random() * 5) + 1; // simulate multiple joins
+        setCount(n);
+        updateCounters(n);
+      }
+
+      // Animate stats on scroll
+      const stats = [
+        { el: document.getElementById("stat1"), end: 22000 },
+        { el: document.getElementById("stat2"), end: 65000 },
+        { el: document.getElementById("stat3"), end: 14000 },
+        { el: document.getElementById("stat4"), end: 48 },
+      ];
+
+      stats.forEach((s, i) => {
+        gsap.from(s.el, {
+          scrollTrigger: {
+            trigger: s.el,
+            start: "top 85%",
+          },
+          innerText: 0,
+          duration: 1.2,
+          delay: i * 0.1,
+          ease: "power2.out",
+          snap: { innerText: 1 },
+          onUpdate: function () {
+            const val = Math.round(this.targets()[0].innerText);
+            if (s.end >= 1000) {
+              s.el.innerText = (val / 1000).toFixed(0) + "K";
+            } else {
+              s.el.innerText = val;
+            }
+          },
+        });
+      });
+
+      // -------------------------
+      // Network markers
+      // -------------------------
+      const networkMarkers = document.getElementById("networkMarkers");
+      const markerPositions = [
+        { top: "22%", left: "38%" },
+        { top: "35%", left: "52%" },
+        { top: "50%", left: "45%" },
+        { top: "62%", left: "35%" },
+        { top: "70%", left: "55%" },
+      ];
+
+      function renderNetworkMarkers() {
+        networkMarkers.innerHTML = "";
+        markerPositions.forEach((pos, i) => {
+          const m = document.createElement("div");
+          m.className = "map-marker";
+          m.style.top = pos.top;
+          m.style.left = pos.left;
+          m.title = `Region ${i + 1}`;
+          networkMarkers.appendChild(m);
+
+          gsap.from(m, {
+            scale: 0,
+            opacity: 0,
+            duration: 0.6,
+            delay: 0.2 + i * 0.1,
+            ease: "back.out(1.7)",
+          });
+        });
+      }
+
+      // -------------------------
+      // Join form
+      // -------------------------
+      const joinForm = document.getElementById("joinForm");
+      const nameInput = document.getElementById("nameInput");
+      const formMessage = document.getElementById("formMessage");
+
+      joinForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = nameInput.value.trim();
+        if (!name) {
+          formMessage.textContent = "Please enter your name.";
+          formMessage.className = "mt-2 text-sm font-semibold text-red-600";
+          return;
+        }
+
+        incrementCounter();
+
+        formMessage.textContent = `Thanks, ${name}! You’re now part of the SBI network.`;
+        formMessage.className = "mt-2 text-sm font-semibold text-sbi-green";
+        nameInput.value = "";
+
+        // Animate network counter
+        gsap.fromTo(
+          networkCounter.parentElement,
+          { scale: 0.95 },
+          { scale: 1, duration: 0.35, ease: "power2.out" }
+        );
+      });
+
+     
+      function initAnimations() {
+        const initialCount = getCount();
+        updateCounters(initialCount);
+
+        // Hero elements
+        gsap.from("#heroImage", {
+          y: 40,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+        });
+
+        gsap.from(".float-badge", {
+          y: 20,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power3.out",
+        });
+
+        // Sections fade/slide up
+        gsap.utils.toArray("section").forEach((sec) => {
+          gsap.from(sec.children, {
+            scrollTrigger: {
+              trigger: sec,
+              start: "top 85%",
+            },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.08,
+            ease: "power3.out",
+          });
+        });
+
+        // Simulate live counter growth
+        setInterval(() => {
+          incrementCounter();
+        }, 4000);
+      }
+
+      renderNetworkMarkers();
+      initAnimations();
+    </script>
+  </body>
+</html>
