@@ -125,11 +125,11 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/videos"
+            href="/owner"
             onClick={() => setOpen(false)}
             className="border-b border-white/10 py-4 text-sm text-white/80"
           >
-            Videos
+            ower login
           </Link>
 
           <Link
