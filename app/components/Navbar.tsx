@@ -133,7 +133,7 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/contact"
+            href="/contect"
             onClick={() => setOpen(false)}
             className="border-b border-white/10 py-4 text-sm text-white/80"
           >
