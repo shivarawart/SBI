@@ -499,8 +499,6 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
                   {/* TIME */}
 
-                 
-
                   {/* ERROR */}
 
                   {error && (
@@ -517,7 +515,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
                   <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <p className="max-w-xs text-[10px] leading-5 text-white/25">
                       Your message will be sent directly to
-                      owner@vishavguru.com.
+                      rajinderkumardhiman672@gmail.com
                     </p>
 
                     <button
