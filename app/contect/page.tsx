@@ -321,7 +321,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
                   </p>
 
                   <p className="mt-2 text-sm font-medium text-white/75 transition group-hover:text-amber-300">
-                    owner@vishavguru.com
+                    rajinderkumardhiman672@gmail.com
                   </p>
                 </div>
               </a>
