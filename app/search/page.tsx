@@ -1,11 +1,13 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import Visitor from '../components/Visitor'
 
 type SearchResult = {
   id: number;
   title: string;
   description: string;
+  url: string;
   category: string;
 };
 
@@ -14,46 +16,256 @@ const SEARCH_RESULTS: SearchResult[] = [
     id: 1,
     title: "Top Universities in India",
     description:
-      "Explore universities, colleges, courses, admissions and other education opportunities.",
+      "Explore universities, colleges, courses, admissions and other education opportunities. Find the best fit for your academic goals.",
+    url: "vishvaguru.com/universities/india",
     category: "Universities",
   },
   {
     id: 2,
     title: "Scholarships for Students",
     description:
-      "Discover scholarship opportunities and financial support for your education journey.",
+      "Discover scholarship opportunities and financial support for your education journey. Merit-based, need-based, and country-specific scholarships.",
+    url: "vishvaguru.com/scholarships",
     category: "Scholarships",
   },
   {
     id: 3,
-    title: "SOP Guide",
+    title: "SOP Guide - Statement of Purpose",
     description:
-      "Learn how to create a strong Statement of Purpose for university applications.",
+      "Learn how to create a strong Statement of Purpose for university applications. Templates, examples, and expert tips included.",
+    url: "vishvaguru.com/guides/sop",
     category: "Guides",
   },
   {
     id: 4,
-    title: "Study in USA",
+    title: "Study in USA - Complete Guide",
     description:
-      "Explore universities, courses, scholarships and useful information for studying in the USA.",
+      "Explore universities, courses, scholarships and useful information for studying in the USA. Visa process, costs, and living guide.",
+    url: "vishvaguru.com/study-abroad/usa",
     category: "Study Abroad",
   },
+  {
+    id: 5,
+    title: "IELTS Preparation Resources",
+    description:
+      "Free IELTS practice tests, study materials, and preparation tips to help you achieve your target band score.",
+    url: "vishvaguru.com/exams/ielts",
+    category: "Exams",
+  },
+  {
+    id: 6,
+    title: "Student Visa Requirements",
+    description:
+      "Complete guide to student visa requirements for popular study destinations. Documents, process, and timeline information.",
+    url: "vishvaguru.com/visa-guide",
+    category: "Visa",
+  },
 ];
+
+const QUICK_SEARCHES = [
+  "Universities",
+  "Scholarships",
+  "Study in USA",
+  "IELTS",
+];
+
+const RELATED_SEARCHES = [
+  "Best universities for international students",
+  "Scholarship application deadlines 2026",
+  "How to write SOP for masters",
+  "Study abroad cost calculator",
+];
+
+function SearchIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
+}
+
+function CloseIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
+    </svg>
+  );
+}
+
+function GlobeIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M2.5 12h19" />
+      <path d="M12 2.5c2.7 2.6 4 5.8 4 9.5s-1.3 6.9-4 9.5c-2.7-2.6-4-5.8-4-9.5s1.3-6.9 4-9.5Z" />
+    </svg>
+  );
+}
+
+function VishvaguruLogo({
+  large = false,
+}: {
+  large?: boolean;
+}) {
+  const size = large
+    ? "text-[clamp(2.75rem,10vw,6.75rem)]"
+    : "text-xl sm:text-2xl";
+
+  return (
+    <div
+      aria-label="Vishvaguru"
+      className={`${size} font-semibold tracking-[-0.055em] leading-none select-none`}
+    >
+      <span className="text-blue-600">V</span>
+      <span className="text-red-500">i</span>
+      <span className="text-yellow-500">s</span>
+      <span className="text-blue-600">h</span>
+      <span className="text-green-600">v</span>
+      <span className="text-red-500">a</span>
+      <span className="text-yellow-500">g</span>
+      <span className="text-blue-600">u</span>
+      <span className="text-green-600">r</span>
+      <span className="text-red-500">u</span>
+    </div>
+  );
+}
+
+type SearchBarProps = {
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onClear: () => void;
+  compact?: boolean;
+};
+
+function SearchBar({
+  value,
+  onChange,
+  onSubmit,
+  onClear,
+  compact = false,
+}: SearchBarProps) {
+  return (
+    <form
+      onSubmit={onSubmit}
+      role="search"
+      className={`w-full ${compact ? "max-w-2xl" : "max-w-[760px]"}`}
+    >
+      <div
+        className={[
+          "group flex w-full items-center",
+          "rounded-full border border-black/10",
+          "bg-white/95 backdrop-blur-xl",
+          "shadow-[0_8px_35px_rgba(0,0,0,0.12)]",
+          "transition-all duration-200",
+          "focus-within:border-black/20",
+          "focus-within:shadow-[0_10px_45px_rgba(0,0,0,0.18)]",
+          compact
+            ? "min-h-[48px] sm:min-h-[52px]"
+            : "min-h-[54px] sm:min-h-[58px] lg:min-h-[62px]",
+        ].join(" ")}
+      >
+        <div
+          className={`flex shrink-0 items-center justify-center text-gray-500 ${
+            compact
+              ? "ml-4 h-8 w-8 sm:ml-5"
+              : "ml-4 h-9 w-9 sm:ml-5"
+          }`}
+        >
+          <SearchIcon
+            className={
+              compact
+                ? "h-[18px] w-[18px] sm:h-5 sm:w-5"
+                : "h-5 w-5 sm:h-[21px] sm:w-[21px]"
+            }
+          />
+        </div>
+
+        <input
+          type="search"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder="Search Vishvaguru or type a URL"
+          aria-label="Search Vishvaguru"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          enterKeyHint="search"
+          className={[
+            "min-w-0 flex-1 bg-transparent",
+            "border-0 outline-none",
+            "text-gray-900",
+            "placeholder:text-gray-400",
+            "selection:bg-blue-100",
+            compact
+              ? "px-3 text-[15px] sm:text-base"
+              : "px-3 text-[15px] sm:text-base lg:text-[17px]",
+          ].join(" ")}
+        />
+
+        {value.length > 0 && (
+          <>
+            <div className="h-6 w-px shrink-0 bg-gray-200" />
+
+            <button
+              type="button"
+              onClick={onClear}
+              aria-label="Clear search"
+              title="Clear search"
+              className="mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 active:scale-95 sm:mr-2"
+            >
+              <CloseIcon className="h-[17px] w-[17px]" />
+            </button>
+          </>
+        )}
+
+        <button
+          type="submit"
+          aria-label="Search"
+          title="Search"
+          className="mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-blue-600 transition hover:bg-blue-50 active:scale-95 sm:mr-2"
+        >
+          <SearchIcon className="h-[19px] w-[19px] sm:h-5 sm:w-5" />
+        </button>
+      </div>
+    </form>
+  );
+}
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
-
-  const handleChange = (value: string) => {
-    setQuery(value);
-  };
-
-  const handleClear = () => {
-    setQuery("");
-    setSubmittedQuery("");
-    setHasSearched(false);
-  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -70,6 +282,18 @@ export default function HomePage() {
     setHasSearched(true);
   };
 
+  const handleClear = () => {
+    setQuery("");
+    setSubmittedQuery("");
+    setHasSearched(false);
+  };
+
+  const handleQuickSearch = (value: string) => {
+    setQuery(value);
+    setSubmittedQuery(value);
+    setHasSearched(true);
+  };
+
   const filteredResults = useMemo(() => {
     if (!submittedQuery) return [];
 
@@ -79,431 +303,299 @@ export default function HomePage() {
       return (
         result.title.toLowerCase().includes(search) ||
         result.description.toLowerCase().includes(search) ||
-        result.category.toLowerCase().includes(search)
+        result.category.toLowerCase().includes(search) ||
+        result.url.toLowerCase().includes(search)
       );
     });
   }, [submittedQuery]);
 
-  const handleQuickSearch = (value: string) => {
-    setQuery(value);
-    setSubmittedQuery(value);
-    setHasSearched(true);
-  };
-
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-black text-white">
-      {/* =========================================================
-          FIXED BACKGROUND IMAGE
-          This NEVER moves with the page.
-      ========================================================= */}
-      <div
-        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage:
-            "url('https://www.shutterstock.com/image-vector/republic-india-map-showing-indian-600w-437039734.jpg')",
-        }}
-      />
+    <div className="relative min-h-[calc(70vh-80px)] w-full overflow-hidden bg-white text-gray-900">
+      {!hasSearched ? (
+        /*
+         * ============================================================
+         * HOME / SEARCH ENGINE LANDING
+         * ============================================================
+         */
+        <main className="relative flex min-h-[100svh] h-full object-cover w-full items-center justify-center overflow-hidden">
+          {/* Background image - Using external URL for demo */}
+          <div
+            aria-hidden="true"
+            className="absolute  object-cover inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage:
+                "url('/a5593427-15d9-4b62-b7b1-56b600c72c4a.png')",
+            }}
+          />
 
-      {/* =========================================================
-          FIXED DARK OVERLAY
-      ========================================================= */}
-      <div className="fixed inset-0 z-10 bg-black/60" />
+          {/* Dark cinematic overlay */}
+          <div aria-hidden="true" className="absolute inset-0 bg-black/30" />
 
-      {/* =========================================================
-          FIXED GRADIENT OVERLAY
-      ========================================================= */}
-      <div className="fixed inset-0 z-10 bg-gradient-to-b from-black/30 via-black/60 to-black" />
+          {/* Left-side readability gradient */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent"
+          />
 
-      {/* =========================================================
-          FIXED SOFT LIGHT
-      ========================================================= */}
-      <div className="pointer-events-none fixed left-1/2 top-1/3 z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/[0.03] blur-[120px]" />
+          {/* Bottom readability gradient */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/25 to-transparent"
+          />
 
-      {/* =========================================================
-          ENTIRE PAGE CONTENT
-          Relative = page scrolls normally.
-          z-20 = always above the fixed image.
-      ========================================================= */}
-      <main className="relative z-20 min-h-screen w-full">
-        {/* =======================================================
-            MAIN CONTENT
-        ======================================================= */}
-        <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-8 sm:px-6 lg:px-8">
-          {/* =====================================================
-              TOP BRAND / BADGE
-          ===================================================== */}
-          <div className="flex justify-center pt-6 sm:pt-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-xs font-medium text-white/70 backdrop-blur-xl">
-              <span className="h-1.5 w-1.5 rounded-full bg-white" />
-              India&apos;s Global Education Search
+          {/* Main search content */}
+          <section className="relative z-10 flex w-full flex-col items-center px-4 py-24 text-center sm:px-6 md:py-28 lg:px-8">
+            <div className="flex w-full max-w-5xl flex-col items-center">
+              {/* Brand */}
+              <div className="mb-7 sm:mb-9 md:mb-10">
+                <VishvaguruLogo large />
+              </div>
+
+              {/* Search */}
+              <SearchBar
+                value={query}
+                onChange={setQuery}
+                onSubmit={handleSubmit}
+                onClear={handleClear}
+              />
+
+              {/* Desktop search buttons */}
+              <div className="mt-7 hidden items-center justify-center gap-3 sm:flex">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (query.trim()) {
+                      setSubmittedQuery(query.trim());
+                      setHasSearched(true);
+                    }
+                  }}
+                  className="rounded-lg border border-white/20 bg-white/85 px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm backdrop-blur-md transition hover:bg-white hover:shadow-md active:scale-[0.98]"
+                >
+                  Vishvaguru Search
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const firstResult = SEARCH_RESULTS[0];
+
+                    if (firstResult) {
+                      setQuery(firstResult.title);
+                      setSubmittedQuery(firstResult.title);
+                      setHasSearched(true);
+                    }
+                  }}
+                  className="rounded-lg border border-white/20 bg-white/70 px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm backdrop-blur-md transition hover:bg-white hover:shadow-md active:scale-[0.98]"
+                >
+                  I'm Feeling Lucky
+                </button>
+              </div>
+
+              {/* Popular searches */}
+              <div className="mt-7 flex w-full max-w-[760px] flex-wrap items-center justify-center gap-2 sm:mt-9">
+                <span className="mr-1 rounded-full bg-black/20 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md sm:text-sm">
+                  Popular
+                </span>
+
+                {QUICK_SEARCHES.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => handleQuickSearch(item)}
+                    className="min-h-10 rounded-full border border-white/25 bg-white/15 px-4 py-2 text-xs font-medium text-white shadow-sm backdrop-blur-md transition hover:bg-white/25 active:scale-[0.97] sm:text-sm"
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Visitor />
+          </section>
+
+          {/* Small bottom hint */}
+          <div className="absolute bottom-1 left-0 right-0 z-10 px-4 text-center">
+            <p className="text-[11px] font-medium tracking-wide text-white/75 sm:text-xs">
+              Search knowledge. Discover India. Explore the world.
+            </p>
+          </div>
+        </main>
+      ) : (
+        /*
+         * ============================================================
+         * SEARCH RESULTS
+         * ============================================================
+         */
+        <main className="min-h-[100svh] w-full bg-white">
+          {/* Search area — not a navbar/header */}
+          <div className="sticky top-[70px] z-30 border-b border-gray-200/80 bg-white/95 px-3 py-3 shadow-sm backdrop-blur-xl sm:px-5 sm:py-4 lg:px-8">
+            <div className="mx-auto flex w-full max-w-6xl items-center gap-3">
+              {/* Compact logo */}
+              <button
+                type="button"
+                onClick={handleClear}
+                aria-label="Go to Vishvaguru home"
+                className="hidden shrink-0 sm:block"
+              >
+                <VishvaguruLogo />
+              </button>
+
+              {/* Search */}
+              <SearchBar
+                value={query}
+                onChange={setQuery}
+                onSubmit={handleSubmit}
+                onClear={handleClear}
+                compact
+              />
+            </div>
+
+            {/* Search categories */}
+            <div className="mx-auto mt-3 flex w-full max-w-6xl overflow-x-auto scrollbar-none">
+              <div className="flex min-w-max items-center gap-5 px-1 text-sm">
+                <button
+                  type="button"
+                  className="border-b-2 border-blue-600 pb-2 font-medium text-blue-600"
+                >
+                  All
+                </button>
+
+                {["Images", "Videos", "News", "Maps", "More"].map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className="border-b-2 border-transparent pb-2 text-gray-600 transition hover:text-gray-900"
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* =====================================================
-              HERO
-          ===================================================== */}
-          <section className="flex flex-1 flex-col items-center justify-center py-16 text-center sm:py-20 lg:py-28">
-            {/* Brand */}
-            <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl md:text-7xl lg:text-8xl">
-              <span className="bg-gradient-to-r from-white via-white to-white/50 bg-clip-text text-transparent">
-                Vishvaguru
-              </span>
-            </h1>
+          {/* Results */}
+          <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+            <div className="max-w-3xl">
+              <p className="mb-7 text-xs text-gray-500 sm:text-sm">
+                About {filteredResults.length * 1250} results
+              </p>
 
-            {/* Description */}
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/55 sm:text-base md:text-lg">
-              Search universities, courses, scholarships, guides and more for
-              your global education journey.
-            </p>
-
-            {/* ===================================================
-                SEARCH
-            =================================================== */}
-            <form onSubmit={handleSubmit} className="mt-10 w-full max-w-3xl">
-              <div className="group relative flex min-h-[62px] items-center rounded-2xl border border-white/10 bg-black/50 p-2 shadow-2xl shadow-black/40 backdrop-blur-2xl transition-all duration-300 hover:border-white/20 focus-within:border-white/25 focus-within:bg-black/60 sm:min-h-[70px] sm:rounded-3xl sm:p-2.5">
-                {/* Search Icon */}
-                <div className="pointer-events-none flex h-11 w-11 shrink-0 items-center justify-center text-white/40 sm:h-12 sm:w-12">
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="m20 20-3.5-3.5" />
-                  </svg>
-                </div>
-
-                {/* Input */}
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(event) => handleChange(event.target.value)}
-                  placeholder="Search anything on Vishvaguru..."
-                  className="min-w-0 flex-1 bg-transparent px-2 text-sm text-white outline-none placeholder:text-white/30 sm:text-base"
-                />
-
-                {/* Clear */}
-                {query && (
-                  <button
-                    type="button"
-                    onClick={handleClear}
-                    aria-label="Clear search"
-                    className="mr-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white/35 transition hover:bg-white/10 hover:text-white"
-                  >
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                    >
-                      <path d="M6 6l12 12" />
-                      <path d="M18 6 6 18" />
-                    </svg>
-                  </button>
-                )}
-
-                {/* Search Button */}
-                <button
-                  type="submit"
-                  className="flex h-11 shrink-0 items-center justify-center rounded-xl bg-white px-5 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/90 active:scale-95 sm:h-12 sm:px-6"
-                >
-                  Search
-                </button>
-              </div>
-            </form>
-
-            {/* ===================================================
-                QUICK SEARCH CHIPS
-            =================================================== */}
-            <div className="mt-5 flex w-full flex-wrap items-center justify-center gap-2">
-              {[
-                "Universities",
-                "Scholarships",
-                "SOP Guide",
-                "Study in USA",
-              ].map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => handleQuickSearch(item)}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/55 backdrop-blur-md transition-all duration-300 hover:border-white/20 hover:bg-white/[0.09] hover:text-white active:scale-95"
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {/* =====================================================
-              SEARCH RESULTS
-          ===================================================== */}
-          {hasSearched && (
-            <section className="w-full pb-20">
-              <div className="mx-auto max-w-4xl">
-                {/* Result Header */}
-                <div className="mb-5 flex items-end justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/30">
-                      Search results
-                    </p>
-
-                    <h2 className="mt-2 text-xl font-semibold text-white sm:text-2xl">
-                      Results for{" "}
-                      <span className="text-white/50">
-                        &quot;{submittedQuery}&quot;
-                      </span>
-                    </h2>
+              {filteredResults.length === 0 ? (
+                <section className="py-8 sm:py-12">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                    <SearchIcon className="h-5 w-5 text-gray-500" />
                   </div>
 
-                  <span className="hidden rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-white/40 sm:block">
-                    {filteredResults.length}{" "}
-                    {filteredResults.length === 1 ? "result" : "results"}
-                  </span>
-                </div>
+                  <h2 className="text-lg font-semibold text-gray-900 sm:text-xl">
+                    No results found
+                  </h2>
 
-                {/* No Results */}
-                {filteredResults.length === 0 ? (
-                  <div className="rounded-3xl border border-white/10 bg-black/40 p-8 text-center backdrop-blur-xl sm:p-12">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05]">
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <circle cx="11" cy="11" r="7" />
-                        <path d="m20 20-3.5-3.5" />
-                      </svg>
-                    </div>
+                  <p className="mt-2 text-sm leading-6 text-gray-600 sm:text-base">
+                    Your search for{" "}
+                    <span className="font-medium text-gray-900">
+                      "{submittedQuery}"
+                    </span>{" "}
+                    did not match any available results.
+                  </p>
 
-                    <h3 className="mt-5 text-lg font-semibold">
-                      No results found
-                    </h3>
+                  <div className="mt-6">
+                    <p className="text-sm font-medium text-gray-900">Try:</p>
 
-                    <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-white/40">
-                      We couldn&apos;t find anything matching your search. Try
-                      another keyword or explore one of the quick searches.
-                    </p>
+                    <ul className="mt-2 space-y-1.5 text-sm text-gray-600">
+                      <li>• Using different keywords</li>
+                      <li>• Using fewer words</li>
+                      <li>• Using a broader search</li>
+                    </ul>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {filteredResults.map((result) => (
-                      <article
-                        key={result.id}
-                        className="group rounded-3xl border border-white/10 bg-black/40 p-5 backdrop-blur-xl transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] sm:p-6"
-                      >
-                        <div className="flex gap-4">
-                          {/* Icon */}
-                          <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-white/60 sm:flex">
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="1.6"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z" />
-                              <path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20" />
-                            </svg>
-                          </div>
-
-                          {/* Content */}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/40">
-                                {result.category}
-                              </span>
-                            </div>
-
-                            <h3 className="mt-3 text-base font-semibold text-white transition-colors group-hover:text-white/90 sm:text-lg">
-                              {result.title}
-                            </h3>
-
-                            <p className="mt-2 text-sm leading-6 text-white/45">
-                              {result.description}
-                            </p>
-
-                            <button
-                              type="button"
-                              className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-white/50 transition hover:text-white"
-                            >
-                              Explore
-                              <svg
-                                width="15"
-                                height="15"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M5 12h14" />
-                                <path d="m13 6 6 6-6 6" />
-                              </svg>
-                            </button>
-                          </div>
+                </section>
+              ) : (
+                <div className="space-y-9 sm:space-y-11">
+                  {filteredResults.map((result) => (
+                    <article key={result.id} className="group max-w-3xl">
+                      {/* URL / category */}
+                      <div className="flex min-w-0 items-center gap-2">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100">
+                          <GlobeIcon className="h-4 w-4 text-gray-500" />
                         </div>
-                      </article>
+
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium text-gray-800">
+                            {result.category}
+                          </p>
+
+                          <p className="truncate text-xs text-gray-500 sm:text-sm">
+                            {result.url}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <button
+                        type="button"
+                        className="mt-2 block text-left text-lg font-medium leading-7 text-blue-700 underline-offset-2 transition hover:underline sm:text-xl"
+                      >
+                        {result.title}
+                      </button>
+
+                      {/* Description */}
+                      <p className="mt-1.5 text-sm leading-6 text-gray-600 sm:text-[15px]">
+                        {result.description}
+                      </p>
+
+                      {/* Links */}
+                      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+                        <button
+                          type="button"
+                          className="text-blue-600 hover:underline"
+                        >
+                          Overview
+                        </button>
+
+                        <button
+                          type="button"
+                          className="text-blue-600 hover:underline"
+                        >
+                          Requirements
+                        </button>
+
+                        <button
+                          type="button"
+                          className="text-blue-600 hover:underline"
+                        >
+                          Explore
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+
+              {/* Related searches */}
+              {filteredResults.length > 0 && (
+                <section className="mt-14 border-t border-gray-200 pt-8 sm:mt-16">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Related searches
+                  </h2>
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {RELATED_SEARCHES.map((search) => (
+                      <button
+                        key={search}
+                        type="button"
+                        onClick={() => handleQuickSearch(search)}
+                        className="flex min-h-12 items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm text-gray-700 transition hover:border-gray-300 hover:bg-white hover:shadow-sm"
+                      >
+                        <SearchIcon className="h-4 w-4 shrink-0 text-gray-400" />
+
+                        <span className="line-clamp-2">{search}</span>
+                      </button>
                     ))}
                   </div>
-                )}
-              </div>
-            </section>
-          )}
-
-          {/* =====================================================
-              EXTRA PAGE CONTENT
-              This demonstrates that the page can become longer
-              while the background remains fixed.
-          ===================================================== */}
-          <section className="w-full pb-20">
-            <div className="grid gap-4 md:grid-cols-3">
-              {/* Card 1 */}
-              <div className="rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
-                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05]">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M3 21h18" />
-                    <path d="M5 21V7l7-4 7 4v14" />
-                    <path d="M9 21v-5h6v5" />
-                  </svg>
-                </div>
-
-                <h3 className="text-lg font-semibold">Universities</h3>
-
-                <p className="mt-2 text-sm leading-6 text-white/40">
-                  Find universities and institutions for your next education
-                  journey.
-                </p>
-              </div>
-
-              {/* Card 2 */}
-              <div className="rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
-                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05]">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 2v20" />
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
-                </div>
-
-                <h3 className="text-lg font-semibold">Scholarships</h3>
-
-                <p className="mt-2 text-sm leading-6 text-white/40">
-                  Discover financial opportunities that can support your
-                  studies.
-                </p>
-              </div>
-
-              {/* Card 3 */}
-              <div className="rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
-                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05]">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
-                  </svg>
-                </div>
-
-                <h3 className="text-lg font-semibold">Education Guides</h3>
-
-                <p className="mt-2 text-sm leading-6 text-white/40">
-                  Access useful guides for admissions, applications and studying
-                  abroad.
-                </p>
-              </div>
+                </section>
+              )}
             </div>
-          </section>
-
-          {/* =====================================================
-              FOOTER
-          ===================================================== */}
-          <footer className="mt-auto border-t border-white/10 py-8">
-            <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
-              {/* Brand */}
-              <div className="text-sm font-semibold text-white/70">
-                Vishvaguru
-              </div>
-
-              {/* Links */}
-              <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-                <a
-                  href="/about"
-                  className="text-xs text-white/35 transition hover:text-white"
-                >
-                  About
-                </a>
-
-                <a
-                  href="/privacy"
-                  className="text-xs text-white/35 transition hover:text-white"
-                >
-                  Privacy
-                </a>
-
-                <a
-                  href="/terms"
-                  className="text-xs text-white/35 transition hover:text-white"
-                >
-                  Terms
-                </a>
-
-                <a
-                  href="/contact"
-                  className="text-xs text-white/35 transition hover:text-white"
-                >
-                  Contact
-                </a>
-              </nav>
-
-              {/* Copyright */}
-              <p className="text-xs text-white/25">
-                © {new Date().getFullYear()} Vishvaguru
-              </p>
-            </div>
-          </footer>
-        </div>
-      </main>
+          </div>
+        </main>
+      )}
     </div>
   );
 }

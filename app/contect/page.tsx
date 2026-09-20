@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import emailjs from "@emailjs/browser";
+import { ArrowRight, Check, Mail, MessageCircle, Users } from "lucide-react";
 
 type ContactForm = {
   name: string;
@@ -10,14 +12,17 @@ type ContactForm = {
   message: string;
 };
 
-export default function ContactPage() {
-  const [form, setForm] = useState<ContactForm>({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
+const BACKGROUND_IMAGE = "/a5593427-15d9-4b62-b7b1-56b600c72c4a.png";
 
+const initialForm: ContactForm = {
+  name: "",
+  email: "",
+  phone: "",
+  message: "",
+};
+
+export default function ContactPage() {
+  const [form, setForm] = useState<ContactForm>(initialForm);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -35,282 +40,376 @@ export default function ContactPage() {
     setError("");
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    const name = form.name.trim();
-    const email = form.email.trim();
-    const phone = form.phone.trim();
-    const message = form.message.trim();
+  if (loading) return;
 
-    if (!name || !email || !phone || !message) {
-      setError("Please fill in all fields.");
-      return;
+  setError("");
+  setSubmitted(false);
+
+  const form = e.currentTarget;
+
+  const formData = new FormData(form);
+
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const message = String(formData.get("message") ?? "").trim();
+
+  // -----------------------------
+  // VALIDATION
+  // -----------------------------
+
+  if (!name || !email || !phone || !message) {
+    setError("Please fill in all required fields.");
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) {
+    setError("Please enter a valid email address.");
+    return;
+  }
+
+  if (phone.length < 10) {
+    setError("Please enter a valid phone number.");
+    return;
+  }
+
+  if (message.length < 10) {
+    setError("Please enter at least 10 characters in your message.");
+    return;
+  }
+
+  // -----------------------------
+  // EMAILJS CONFIG
+  // -----------------------------
+
+  const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+  const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+  const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+  if (!serviceId || !templateId || !publicKey) {
+    console.error("EmailJS configuration is missing.");
+
+    setError(
+      "Email service is not configured correctly. Please try again later.",
+    );
+
+    return;
+  }
+
+  // -----------------------------
+  // ADD TIME
+  // -----------------------------
+
+  const timeInput = form.querySelector(
+    'input[name="time"]',
+  ) as HTMLInputElement | null;
+
+  if (timeInput) {
+    timeInput.value = new Date().toLocaleString("en-IN", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await emailjs.sendForm(serviceId, templateId, form, {
+      publicKey,
+    });
+
+    console.log("EmailJS success:", response);
+
+    setSubmitted(true);
+    form.reset();
+  } catch (error: unknown) {
+   
+
+    if (typeof error === "object" && error !== null) {
+      const emailError = error as {
+        status?: number;
+        text?: string;
+        message?: string;
+      };
+
+   
+
+      if (emailError.status === 412) {
+        setError(
+          "The Gmail connection used by EmailJS has expired. Please reconnect Gmail in EmailJS.",
+        );
+      } else if (emailError.text) {
+        setError(emailError.text);
+      } else if (emailError.message) {
+        setError(emailError.message);
+      } else {
+        setError("Unable to send your message. Please try again.");
+      }
+    } else {
+      setError("Unable to send your message. Please try again.");
     }
-
-    if (name.length < 2) {
-      setError("Please enter a valid name.");
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    if (!/^[0-9+\-\s()]{7,20}$/.test(phone)) {
-      setError("Please enter a valid phone number.");
-      return;
-    }
-
-    if (message.length < 10) {
-      setError("Please write a little more about your message.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError("");
-
-      /*
-        Connect your API here later:
-
-        const response = await fetch("/api/contact", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to send message");
-        }
-      */
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setSubmitted(true);
-
-      setForm({
-        name: "",
-        email: "",
-        phone: "",
-        message: "",
-      });
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    <main className="relative min-h-screen w-full overflow-hidden bg-[#050505] text-white">
-      {/* Background */}
+    <main className="relative min-h-[calc(100svh-80px)] overflow-hidden bg-[#070604] text-white">
+      {/* =========================================================
+          BACKGROUND
+      ========================================================= */}
+
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-white/[0.035] blur-[140px]" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+          style={{
+            backgroundImage: `url("${BACKGROUND_IMAGE}")`,
+          }}
+        />
 
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[#070604]/80" />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/40 to-[#050505]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-[#070604]/75 to-[#070604]" />
+
+        <div className="absolute left-[8%] top-0 h-[520px] w-[520px] bg-amber-500/[0.045] blur-[150px]" />
+
+        <div className="absolute right-[-120px] top-[30%] h-[500px] w-[500px] bg-orange-500/[0.035] blur-[160px]" />
+
+        <div className="absolute bottom-0 left-[30%] h-[300px] w-[600px] bg-amber-400/[0.025] blur-[140px]" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
-        {/* Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/50 backdrop-blur-xl">
-            <span className="h-1.5 w-1.5 rounded-full bg-white/70" />
-            Get in touch
+      {/* =========================================================
+          CONTENT
+      ========================================================= */}
+
+      <div className="relative z-10 mx-auto w-full max-w-[1450px] px-5 pb-10 pt-8 sm:px-8 sm:pt-12 lg:px-12">
+        {/* =======================================================
+            TOP BAR
+        ======================================================= */}
+
+        <div className="mb-12 flex items-center justify-between border-b border-white/10 pb-5">
+          <div className="flex items-center gap-3">
+            <span className="h-px w-8 bg-amber-400" />
+
+            <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-amber-300/80">
+              Vishvaguru / Contact
+            </span>
           </div>
 
-          <h1 className="text-4xl font-semibold tracking-[-0.04em] sm:text-5xl lg:text-6xl">
-            Contact <span className="text-white/40">Vishvaguru.</span>
-          </h1>
-
-          <p className="mt-5 text-sm leading-7 text-white/45 sm:text-base">
-            Have a question, suggestion, or want to become part of the
-            Vishvaguru community? We&apos;d love to hear from you.
-          </p>
+          <span className="hidden text-[10px] uppercase tracking-[0.25em] text-white/25 sm:block">
+            Connect · Contribute · Grow
+          </span>
         </div>
 
-        {/* Main Grid */}
-        <div className="mt-12 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-8">
-          {/* =====================================================
-              CONTACT INFORMATION
-          ===================================================== */}
-          <section className="flex flex-col rounded-3xl border border-white/10 bg-white/[0.025] p-6 backdrop-blur-xl sm:p-8">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/30">
-                Contact
-              </p>
+        {/* =======================================================
+            HERO
+        ======================================================= */}
 
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight">
-                Let&apos;s talk.
-              </h2>
+        <section className="grid gap-10 lg:grid-cols-[1fr_0.72fr] lg:items-end">
+          <div>
+            <div className="mb-6 flex items-center gap-3">
+              <span className="flex h-7 w-7 items-center justify-center border border-amber-400/30 text-[10px] text-amber-300">
+                01
+              </span>
 
-              <p className="mt-3 text-sm leading-6 text-white/40">
-                Send us your question and the Vishvaguru team will get back to
-                you.
-              </p>
+              <span className="text-[10px] uppercase tracking-[0.25em] text-white/35">
+                Join the community
+              </span>
             </div>
 
-            <div className="mt-10 space-y-3">
+            <h1 className="max-w-5xl text-[clamp(3.2rem,7.5vw,8rem)] font-medium leading-[0.86] tracking-[-0.07em]">
+              Let&apos;s
+              <br />
+              <span className="text-white/25">build</span>{" "}
+              <span className="text-amber-400">together.</span>
+            </h1>
+          </div>
+
+          <div className="max-w-md border-l border-amber-400/30 pl-5 lg:mb-2">
+            <p className="text-sm leading-7 text-white/50 sm:text-base">
+              Vishvaguru is growing into a space for knowledge, discovery, ideas
+              and meaningful connections.
+            </p>
+
+            <p className="mt-4 text-sm leading-7 text-white/30">
+              Have something to share? A suggestion, question or idea can become
+              part of the journey.
+            </p>
+          </div>
+        </section>
+
+        {/* =======================================================
+            MAIN CONTENT
+        ======================================================= */}
+
+        <div className="mt-14 grid border-y border-white/10 lg:grid-cols-[0.72fr_1.28fr]">
+          {/* =====================================================
+              LEFT INFORMATION
+          ===================================================== */}
+
+          <section className="border-b border-white/10 py-8 lg:border-b-0 lg:border-r lg:pr-10">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase tracking-[0.25em] text-white/30">
+                Why connect
+              </span>
+
+              <span className="text-[10px] text-amber-300/60">01 / 03</span>
+            </div>
+
+            <div className="mt-10">
+              {/* Idea */}
+
+              <div className="flex items-start gap-5 border-b border-white/10 py-6">
+                <MessageCircle
+                  size={19}
+                  strokeWidth={1.5}
+                  className="mt-1 shrink-0 text-amber-300"
+                />
+
+                <div>
+                  <h2 className="text-sm font-medium text-white">
+                    Share an idea
+                  </h2>
+
+                  <p className="mt-2 max-w-sm text-xs leading-6 text-white/35">
+                    Your feedback and ideas help shape what Vishvaguru becomes.
+                  </p>
+                </div>
+              </div>
+
+              {/* Community */}
+
+              <div className="flex items-start gap-5 border-b border-white/10 py-6">
+                <Users
+                  size={19}
+                  strokeWidth={1.5}
+                  className="mt-1 shrink-0 text-amber-300"
+                />
+
+                <div>
+                  <h2 className="text-sm font-medium text-white">
+                    Join the journey
+                  </h2>
+
+                  <p className="mt-2 max-w-sm text-xs leading-6 text-white/35">
+                    Connect with a growing community built around discovery and
+                    knowledge.
+                  </p>
+                </div>
+              </div>
+
               {/* Email */}
+
               <a
                 href="mailto:owner@vishavguru.com"
-                className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]"
+                className="group flex items-start gap-5 py-6"
               >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]">
-                  <svg
-                    width="19"
-                    height="19"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                </div>
+                <Mail
+                  size={19}
+                  strokeWidth={1.5}
+                  className="mt-1 shrink-0 text-amber-300"
+                />
 
-                <div className="min-w-0">
-                  <p className="text-xs text-white/30">Email</p>
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/25">
+                    Direct contact
+                  </p>
 
-                  <p className="mt-1 truncate text-sm font-medium text-white/75 transition group-hover:text-white">
+                  <p className="mt-2 text-sm font-medium text-white/75 transition group-hover:text-amber-300">
                     owner@vishavguru.com
                   </p>
                 </div>
               </a>
-
-              {/* Community */}
-              <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]">
-                  <svg
-                    width="19"
-                    height="19"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                </div>
-
-                <div>
-                  <p className="text-xs text-white/30">Community</p>
-
-                  <p className="mt-1 text-sm font-medium text-white/75">
-                    Vishvaguru Global Community
-                  </p>
-                </div>
-              </div>
             </div>
 
-            {/* Member CTA */}
-            <div className="mt-auto pt-10">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
-                <p className="text-sm font-medium text-white/80">
-                  Become a Vishvaguru Member
-                </p>
-
-                <p className="mt-2 text-xs leading-5 text-white/35">
-                  Join the community and stay connected with opportunities,
-                  knowledge and resources.
-                </p>
-
-                <Link
-                  href="/"
-                  className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-white/60 transition hover:text-white"
-                >
-                  Explore Vishvaguru
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M5 12h14" />
-                    <path d="m13 6 6 6-6 6" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
+            <Link
+              href="/"
+              className="group mt-8 inline-flex items-center gap-3 border-b border-white/15 pb-2 text-xs uppercase tracking-[0.15em] text-white/50 transition hover:border-amber-400 hover:text-amber-300"
+            >
+              Explore Vishvaguru
+              <ArrowRight
+                size={14}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </Link>
           </section>
 
           {/* =====================================================
-              CONTACT FORM
+              RIGHT CONTACT FORM
           ===================================================== */}
-          <section className="rounded-3xl border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-8">
+
+          <section className="py-8 lg:pl-10">
             {submitted ? (
-              /* SUCCESS */
-              <div className="flex min-h-[500px] flex-col items-center justify-center text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06]">
-                  <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="m5 12 4 4L19 6" />
-                  </svg>
+              /* =================================================
+                 SUCCESS
+              ================================================= */
+
+              <div className="flex min-h-[500px] flex-col justify-center">
+                <div className="flex h-14 w-14 items-center justify-center border border-emerald-400/25 bg-emerald-400/[0.06] text-emerald-300">
+                  <Check size={24} strokeWidth={1.5} />
                 </div>
 
-                <h2 className="mt-6 text-2xl font-semibold">
-                  Message received.
+                <p className="mt-8 text-[10px] uppercase tracking-[0.25em] text-emerald-300/70">
+                  Transmission complete
+                </p>
+
+                <h2 className="mt-3 max-w-xl text-3xl font-medium tracking-[-0.04em] sm:text-4xl">
+                  Your message has been received.
                 </h2>
 
-                <p className="mt-3 max-w-sm text-sm leading-6 text-white/40">
-                  Thank you for contacting Vishvaguru. We&apos;ll get back to
-                  you as soon as possible.
+                <p className="mt-4 max-w-md text-sm leading-7 text-white/40">
+                  Thank you for reaching out to Vishvaguru. Your message has
+                  been successfully delivered to our team.
                 </p>
 
                 <button
                   type="button"
-                  onClick={() => setSubmitted(false)}
-                  className="mt-7 rounded-xl border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-medium text-white/70 transition hover:bg-white/[0.1] hover:text-white"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setError("");
+                  }}
+                  className="mt-8 flex w-fit items-center gap-3 border border-white/15 px-5 py-3 text-xs uppercase tracking-[0.15em] text-white/60 transition hover:border-amber-400/40 hover:text-amber-300"
                 >
                   Send another message
+                  <ArrowRight size={14} />
                 </button>
               </div>
             ) : (
               <>
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/30">
-                    Message
-                  </p>
+                {/* FORM HEADER */}
 
-                  <h2 className="mt-3 text-2xl font-semibold tracking-tight">
-                    Tell us what&apos;s on your mind.
-                  </h2>
+                <div className="flex items-start justify-between border-b border-white/10 pb-6">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-amber-300/60">
+                      Contact us
+                    </p>
+
+                    <h2 className="mt-3 text-2xl font-medium tracking-[-0.035em] sm:text-3xl">
+                      Start a conversation.
+                    </h2>
+                  </div>
+
+                  <span className="hidden text-[10px] text-white/20 sm:block">
+                    2026
+                  </span>
                 </div>
 
-                <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-                  {/* Name */}
-                  <div>
+                {/* FORM */}
+
+                <form onSubmit={handleSubmit} className="mt-8">
+                  {/* NAME */}
+
+                  <div className="border-b border-white/10 py-1">
                     <label
                       htmlFor="name"
-                      className="mb-2 block text-xs font-medium text-white/50"
+                      className="block text-[10px] uppercase tracking-[0.2em] text-white/30"
                     >
-                      Full name
+                      01 — Full name
                     </label>
 
                     <input
@@ -321,60 +420,68 @@ export default function ContactPage() {
                       onChange={handleChange}
                       placeholder="Your name"
                       autoComplete="name"
-                      className="h-12 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-sm text-white outline-none transition placeholder:text-white/20 focus:border-white/25 focus:bg-black/50"
+                      disabled={loading}
+                      required
+                      className="h-14 w-full bg-transparent text-sm text-white outline-none placeholder:text-white/15 disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </div>
 
-                  {/* Email + Phone */}
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="mb-2 block text-xs font-medium text-white/50"
-                      >
-                        Email
-                      </label>
+                  {/* EMAIL */}
 
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        placeholder="you@example.com"
-                        autoComplete="email"
-                        className="h-12 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-sm text-white outline-none transition placeholder:text-white/20 focus:border-white/25 focus:bg-black/50"
-                      />
-                    </div>
+                  <div className="border-b border-white/10 py-1">
+                    <label
+                      htmlFor="email"
+                      className="block text-[10px] uppercase tracking-[0.2em] text-white/30"
+                    >
+                      02 — Email
+                    </label>
 
-                    <div>
-                      <label
-                        htmlFor="phone"
-                        className="mb-2 block text-xs font-medium text-white/50"
-                      >
-                        Phone
-                      </label>
-
-                      <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={form.phone}
-                        onChange={handleChange}
-                        placeholder="+91 98765 43210"
-                        autoComplete="tel"
-                        className="h-12 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-sm text-white outline-none transition placeholder:text-white/20 focus:border-white/25 focus:bg-black/50"
-                      />
-                    </div>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                      disabled={loading}
+                      required
+                      className="h-14 w-full bg-transparent text-sm text-white outline-none placeholder:text-white/15 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
                   </div>
 
-                  {/* Message */}
-                  <div>
+                  {/* PHONE */}
+
+                  <div className="border-b border-white/10 py-1">
+                    <label
+                      htmlFor="phone"
+                      className="block text-[10px] uppercase tracking-[0.2em] text-white/30"
+                    >
+                      03 — Phone
+                    </label>
+
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="+91 98765 43210"
+                      autoComplete="tel"
+                      disabled={loading}
+                      required
+                      className="h-14 w-full bg-transparent text-sm text-white outline-none placeholder:text-white/15 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  </div>
+
+                  {/* MESSAGE */}
+
+                  <div className="border-b border-white/10 py-1">
                     <label
                       htmlFor="message"
-                      className="mb-2 block text-xs font-medium text-white/50"
+                      className="block text-[10px] uppercase tracking-[0.2em] text-white/30"
                     >
-                      Message
+                      04 — Message
                     </label>
 
                     <textarea
@@ -382,72 +489,80 @@ export default function ContactPage() {
                       name="message"
                       value={form.message}
                       onChange={handleChange}
-                      placeholder="How can we help?"
-                      rows={6}
-                      className="w-full resize-none rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm leading-6 text-white outline-none transition placeholder:text-white/20 focus:border-white/25 focus:bg-black/50"
+                      placeholder="Tell us what you would like to share..."
+                      rows={5}
+                      disabled={loading}
+                      required
+                      className="w-full resize-none bg-transparent py-4 text-sm leading-7 text-white outline-none placeholder:text-white/15 disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </div>
 
-                  {/* Error */}
+                  {/* TIME */}
+
+                 
+
+                  {/* ERROR */}
+
                   {error && (
-                    <div className="rounded-xl border border-red-400/10 bg-red-400/[0.05] px-4 py-3 text-xs text-red-300/80">
+                    <div
+                      role="alert"
+                      className="mt-5 border-l-2 border-red-400 bg-red-400/[0.05] px-4 py-3 text-xs leading-5 text-red-300"
+                    >
                       {error}
                     </div>
                   )}
 
-                  {/* Submit */}
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="flex h-12 w-full items-center justify-center rounded-xl bg-white px-5 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <span className="flex items-center gap-2">
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-black/20 border-t-black" />
-                        Sending...
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        Send message
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.8"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M5 12h14" />
-                          <path d="m13 6 6 6-6 6" />
-                        </svg>
-                      </span>
-                    )}
-                  </button>
+                  {/* SUBMIT */}
 
-                  <p className="text-center text-[11px] leading-5 text-white/25">
-                    Your information is only used to respond to your enquiry.
-                  </p>
+                  <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="max-w-xs text-[10px] leading-5 text-white/25">
+                      Your message will be sent directly to
+                      owner@vishavguru.com.
+                    </p>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="group flex h-12 items-center justify-center gap-4 bg-amber-400 px-7 text-xs font-semibold uppercase tracking-[0.14em] text-black transition duration-300 hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <>
+                          <span className="h-4 w-4 animate-spin border-2 border-black/20 border-t-black" />
+                          Sending
+                        </>
+                      ) : (
+                        <>
+                          Send message
+                          <ArrowRight
+                            size={15}
+                            className="transition-transform duration-300 group-hover:translate-x-1"
+                          />
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </form>
               </>
             )}
           </section>
         </div>
 
-        {/* Bottom */}
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 sm:flex-row">
-          <p className="text-xs text-white/25">
+        {/* =======================================================
+            FOOTER
+        ======================================================= */}
+
+        <footer className="flex flex-col justify-between gap-4 pt-6 sm:flex-row sm:items-center">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-white/20">
             © {new Date().getFullYear()} Vishvaguru
           </p>
 
           <Link
             href="/"
-            className="text-xs text-white/30 transition hover:text-white"
+            className="text-[10px] uppercase tracking-[0.18em] text-white/30 transition hover:text-amber-300"
           >
             Back to home
           </Link>
-        </div>
+        </footer>
       </div>
     </main>
   );

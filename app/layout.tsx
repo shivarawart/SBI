@@ -21,19 +21,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-screen bg-black text-white antialiased">
-        <ClerkProvider>
-          <header className="sticky top-0 z-[100] w-full">
-            <Navbar />
-          </header>
+   <html
+  lang="en"
+  className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+>
+  <body className="min-h-screen bg-black text-white antialiased">
+    <ClerkProvider>
+      <Navbar />
 
-          <div className="relative min-h-screen w-full">{children}</div>
-        </ClerkProvider>
-      </body>
-    </html>
+      <main className="relative min-h-screen w-full pt-20">
+        {children}
+      </main>
+    </ClerkProvider>
+  </body>
+</html>
   );
 }
