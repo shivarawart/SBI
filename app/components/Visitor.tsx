@@ -60,7 +60,7 @@ export default function Visitor() {
   }, []);
 
   return (
-    <section className="w-full px-4 py-6 sm:px-6 lg:px-8">
+    <section className="w-full max-w-full px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl">
         <div className="group relative w-full overflow-hidden rounded-[28px] border border-black/[0.07] bg-white/90 shadow-[0_20px_70px_-30px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_90px_-35px_rgba(0,0,0,0.3)]">
           {/* Decorative glow */}

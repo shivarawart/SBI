@@ -324,7 +324,7 @@ export default function HomePage() {
             className="absolute  object-cover inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage:
-                "url('/a5593427-15d9-4b62-b7b1-56b600c72c4a.png')",
+                "url('/vishav.png')",
             }}
           />
 
@@ -347,8 +347,58 @@ export default function HomePage() {
           <section className="relative z-10 flex w-full flex-col items-center px-4 py-24 text-center sm:px-6 md:py-28 lg:px-8">
             <div className="flex w-full max-w-5xl flex-col items-center">
               {/* Brand */}
-              <div className="mb-7 sm:mb-9 md:mb-10">
+              <div className="mb-5 sm:mb-7 md:mb-8">
                 <VishvaguruLogo large />
+              </div>
+
+              {/* Coming Soon Badge */}
+              <div className="mb-8">
+                <div
+                  className="
+          group inline-flex items-center gap-2.5
+          rounded-full
+          border border-white/20
+          bg-white/[0.08]
+          px-4 py-2
+          shadow-[0_8px_30px_rgba(0,0,0,0.12)]
+          backdrop-blur-xl
+          transition-all duration-300
+          hover:border-white/30
+          hover:bg-white/[0.13]
+          hover:shadow-[0_10px_40px_rgba(0,0,0,0.18)]
+        "
+                >
+                  {/* Live indicator */}
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                  </span>
+
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/60 sm:text-xs">
+                    Vishvaguru
+                  </span>
+
+                  <span className="h-3 w-px bg-white/20" />
+
+                  <span className="text-xs font-medium text-white/90 sm:text-sm">
+                    India's First Search Engine
+                  </span>
+
+                  <span
+                    className="
+            rounded-full
+            border border-amber-300/20
+            bg-amber-300/10
+            px-2.5 py-1
+            text-[9px] font-bold uppercase
+            tracking-[0.12em]
+            text-amber-200
+            sm:text-[10px]
+          "
+                  >
+                    Coming Soon
+                  </span>
+                </div>
               </div>
 
               {/* Search */}
@@ -364,19 +414,6 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => {
-                    if (query.trim()) {
-                      setSubmittedQuery(query.trim());
-                      setHasSearched(true);
-                    }
-                  }}
-                  className="rounded-lg border border-white/20 bg-white/85 px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm backdrop-blur-md transition hover:bg-white hover:shadow-md active:scale-[0.98]"
-                >
-                  Vishvaguru Search
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
                     const firstResult = SEARCH_RESULTS[0];
 
                     if (firstResult) {
@@ -385,15 +422,140 @@ export default function HomePage() {
                       setHasSearched(true);
                     }
                   }}
-                  className="rounded-lg border border-white/20 bg-white/70 px-5 py-2.5 text-sm font-medium text-gray-800 shadow-sm backdrop-blur-md transition hover:bg-white hover:shadow-md active:scale-[0.98]"
+                  className="
+          rounded-lg
+          border border-white/20
+          bg-white/70
+          px-5 py-2.5
+          text-sm font-medium
+          text-gray-800
+          shadow-sm
+          backdrop-blur-md
+          transition-all duration-200
+          hover:-translate-y-0.5
+          hover:bg-white
+          hover:shadow-md
+          active:scale-[0.98]
+        "
                 >
-                  I'm Feeling Lucky
+                  Top Universities in India
                 </button>
+              </div>
+
+              {/* Audio / Vishvaguru Voice */}
+              <div className="mt-9 w-full max-w-[560px]">
+                <div
+                  className="
+          group relative overflow-hidden
+          rounded-2xl
+          border border-white/15
+          bg-black/20
+          p-3
+          shadow-[0_20px_60px_rgba(0,0,0,0.15)]
+          backdrop-blur-2xl
+          transition-all duration-300
+          hover:border-white/25
+          hover:bg-black/25
+        "
+                >
+                  {/* Subtle glow */}
+                  <div
+                    className="
+            pointer-events-none absolute
+            -left-20 -top-20
+            h-40 w-40
+            rounded-full
+            bg-cyan-400/10
+            blur-3xl
+          "
+                  />
+
+                  <div className="relative flex items-center gap-3">
+                    {/* Audio icon */}
+                    <div
+                      className="
+              flex h-11 w-11 shrink-0
+              items-center justify-center
+              rounded-xl
+              border border-white/10
+              bg-white/10
+              text-white
+              shadow-inner
+            "
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="h-5 w-5"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M11 5L6 9H3v6h3l5 4V5z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15.5 8.5a5 5 0 010 7"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M18.5 6a9 9 0 010 12"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Text */}
+                    <div className="min-w-0 flex-1 text-left">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-semibold text-white">
+                          Vishvaguru Voice
+                        </p>
+
+                        <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/50">
+                          Preview
+                        </span>
+                      </div>
+
+                      <p className="mt-0.5 text-xs text-white/45">
+                        Listen to the Vishvaguru experience
+                      </p>
+                    </div>
+
+                    {/* Native audio controls */}
+                    <audio
+                      controls
+                      preload="metadata"
+                      className="
+              h-9
+              w-[250px]
+              max-w-[42vw]
+              opacity-90
+            "
+                    >
+                      <source src="audia\vishavguru.mp3" type="audio/mpeg" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                </div>
               </div>
 
               {/* Popular searches */}
               <div className="mt-7 flex w-full max-w-[760px] flex-wrap items-center justify-center gap-2 sm:mt-9">
-                <span className="mr-1 rounded-full bg-black/20 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md sm:text-sm">
+                <span
+                  className="
+          mr-1 rounded-full
+          bg-black/20
+          px-3 py-1.5
+          text-xs font-medium
+          text-white
+          backdrop-blur-md
+          sm:text-sm
+        "
+                >
                   Popular
                 </span>
 
@@ -402,14 +564,32 @@ export default function HomePage() {
                     key={item}
                     type="button"
                     onClick={() => handleQuickSearch(item)}
-                    className="min-h-10 rounded-full border border-white/25 bg-white/15 px-4 py-2 text-xs font-medium text-white shadow-sm backdrop-blur-md transition hover:bg-white/25 active:scale-[0.97] sm:text-sm"
+                    className="
+            min-h-10
+            rounded-full
+            border border-white/25
+            bg-white/15
+            px-4 py-2
+            text-xs font-medium
+            text-white
+            shadow-sm
+            backdrop-blur-md
+            transition-all duration-200
+            hover:-translate-y-0.5
+            hover:bg-white/25
+            hover:border-white/35
+            active:scale-[0.97]
+            sm:text-sm
+          "
                   >
                     {item}
                   </button>
                 ))}
               </div>
             </div>
-            <Visitor />
+            <div className="w-full max-w-[920px] mt-4">
+              <Visitor />
+            </div>
           </section>
 
           {/* Small bottom hint */}
