@@ -29,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <ClerkProvider>
       <Navbar />
 
-      <main className="relative min-h-screen w-full pt-20">
+      <main className="relative min-h-screen w-full ">
         {children}
       </main>
     </ClerkProvider>

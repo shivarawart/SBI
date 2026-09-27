@@ -87,136 +87,166 @@ export default function Navbar({
         ========================================================= */}
 
         <Link
-          href="/"
-          onClick={closeMenu}
-          aria-label="Vishvaguru home"
-          className="group relative flex items-center gap-3 outline-none"
-        >
-          {/* Logo mark */}
-          <span
-            className="
-              relative flex h-10 w-10 shrink-0
-              items-center justify-center
-              overflow-hidden rounded-xl
-              border border-amber-300/20
-              bg-gradient-to-br
-              from-amber-300
-              via-orange-500
-              to-red-700
-              shadow-[0_0_30px_rgba(245,158,11,0.15)]
-              transition-all duration-500 ease-out
-              group-hover:scale-110
-              group-hover:-rotate-3
-              group-hover:border-amber-300/60
-              group-hover:shadow-[0_0_40px_rgba(245,158,11,0.35)]
-              group-active:scale-95
-            "
-          >
-            {/* Glow */}
-            <span
-              aria-hidden="true"
-              className="
-                absolute -inset-1
-                rounded-2xl
-                bg-gradient-to-r
-                from-amber-400/0
-                via-orange-400/20
-                to-red-500/0
-                opacity-0
-                blur-md
-                transition-opacity duration-500
-                group-hover:opacity-100
-              "
-            />
+  href="/"
+  onClick={closeMenu}
+  aria-label="Vishvaguru home — coming soon"
+  className="group relative flex items-center gap-2.5 outline-none"
+>
+  {/* Logo mark */}
+  <span
+    className="
+      relative flex h-9 w-9 shrink-0
+      items-center justify-center
+      overflow-hidden rounded-[11px]
+      border border-amber-300/20
+      bg-gradient-to-br
+      from-amber-300
+      via-orange-500
+      to-red-700
+      shadow-[0_0_26px_rgba(245,158,11,0.14)]
+      transition-all duration-500 ease-out
+      group-hover:scale-105
+      group-hover:-rotate-2
+      group-hover:border-amber-300/50
+      group-hover:shadow-[0_0_34px_rgba(245,158,11,0.3)]
+      group-active:scale-95
+    "
+  >
+    {/* Ambient glow */}
+    <span
+      aria-hidden="true"
+      className="
+        absolute -inset-1
+        rounded-2xl
+        bg-gradient-to-r
+        from-amber-400/0
+        via-orange-400/20
+        to-red-500/0
+        opacity-0
+        blur-md
+        transition-opacity duration-500
+        group-hover:opacity-100
+      "
+    />
 
-            {/* Shine */}
-            <span
-              aria-hidden="true"
-              className="
-                absolute inset-0 z-10
-                -translate-x-[130%]
-                skew-x-[-20deg]
-                bg-gradient-to-r
-                from-transparent
-                via-white/40
-                to-transparent
-                transition-transform duration-700
-                group-hover:translate-x-[130%]
-              "
-            />
+    {/* Moving shine */}
+    <span
+      aria-hidden="true"
+      className="
+        absolute inset-0 z-10
+        -translate-x-[140%]
+        skew-x-[-20deg]
+        bg-gradient-to-r
+        from-transparent
+        via-white/40
+        to-transparent
+        transition-transform duration-700
+        group-hover:translate-x-[140%]
+      "
+    />
 
-            {/* Inner border */}
-            <span
-              aria-hidden="true"
-              className="
-                absolute inset-1
-                rounded-lg
-                border border-white/15
-              "
-            />
+    {/* Inner border */}
+    <span
+      aria-hidden="true"
+      className="
+        absolute inset-1
+        rounded-[8px]
+        border border-white/15
+      "
+    />
 
-            {/* V */}
-            <span
-              className="
-                relative z-20
-                select-none
-                text-[15px]
-                font-black
-                tracking-[-0.08em]
-                text-white
-                drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]
-                transition-transform duration-500
-                group-hover:scale-110
-              "
-            >
-              V
-            </span>
-          </span>
+    {/* V */}
+    <span
+      className="
+        relative z-20
+        select-none
+        text-[14px]
+        font-black
+        tracking-[-0.08em]
+        text-white
+        drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]
+        transition-transform duration-500
+        group-hover:scale-110
+      "
+    >
+      V
+    </span>
+  </span>
 
-          {/* Wordmark */}
-          <span
-            className="
-              whitespace-nowrap
-              text-[17px]
-              font-semibold
-              tracking-[-0.04em]
-              text-white
-              transition-all duration-300
-              group-hover:tracking-[-0.02em]
-            "
-          >
-            <span className="text-white/95">Vishva</span>
+  {/* Coming Soon label */}
+  <span
+    className="
+      relative
+      flex items-center gap-1.5
+      whitespace-nowrap
+      rounded-full
+      border border-white/[0.09]
+      bg-white/[0.045]
+      px-2.5 py-1.5
+      backdrop-blur-md
+      transition-all duration-300
+      group-hover:border-amber-300/20
+      group-hover:bg-white/[0.07]
+    "
+  >
+    {/* Live dot */}
+    <span
+      aria-hidden="true"
+      className="
+        relative flex h-1.5 w-1.5
+        shrink-0
+        items-center justify-center
+      "
+    >
+      <span
+        className="
+          absolute h-full w-full
+          animate-ping
+          rounded-full
+          bg-amber-300/60
+        "
+      />
+      <span
+        className="
+          relative h-1.5 w-1.5
+          rounded-full
+          bg-amber-300
+          shadow-[0_0_8px_rgba(251,191,36,0.9)]
+        "
+      />
+    </span>
 
-            <span
-              className="
-                bg-gradient-to-r
-                from-amber-200
-                via-orange-400
-                to-amber-500
-                bg-clip-text
-                text-transparent
-              "
-            >
-              guru
-            </span>
-          </span>
+    <span
+      className="
+        text-[9px]
+        font-bold
+        uppercase
+        tracking-[0.16em]
+        text-white/65
+        transition-colors duration-300
+        group-hover:text-amber-100
+      "
+    >
+      Coming Soon
+    </span>
+  </span>
 
-          {/* Premium indicator */}
-          <span
-            aria-hidden="true"
-            className="
-              absolute -right-2 -top-1
-              h-1.5 w-1.5
-              rounded-full
-              bg-amber-300
-              opacity-0
-              shadow-[0_0_10px_rgba(251,191,36,0.9)]
-              transition-all duration-500
-              group-hover:scale-125
-              group-hover:opacity-100
-            "
-          />
-        </Link>
+  {/* Tiny premium indicator */}
+  <span
+    aria-hidden="true"
+    className="
+      absolute -right-1.5 -top-1
+      h-1 w-1
+      rounded-full
+      bg-amber-300
+      opacity-0
+      shadow-[0_0_10px_rgba(251,191,36,0.9)]
+      transition-all duration-500
+      group-hover:scale-125
+      group-hover:opacity-100
+    "
+  />
+</Link>
 
         {/* =========================================================
             DESKTOP NAVIGATION

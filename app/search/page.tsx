@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
-import Visitor from '../components/Visitor'
+import Visitor from "../components/Visitor";
 
 type SearchResult = {
   id: number;
@@ -131,30 +131,144 @@ function GlobeIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function VishvaguruLogo({
-  large = false,
-}: {
-  large?: boolean;
-}) {
+function VishvaguruLogo({ large = false }: { large?: boolean }) {
   const size = large
-    ? "text-[clamp(2.75rem,10vw,6.75rem)]"
-    : "text-xl sm:text-2xl";
+    ? "text-[clamp(2.5rem,4vw,6.25rem)]"
+    : "text-[17px] sm:text-xl";
+
+  const letters = [
+    ["V", "text-blue-600"],
+    ["i", "text-red-500"],
+    ["s", "text-yellow-500"],
+    ["h", "text-blue-600"],
+    ["v", "text-green-600"],
+    ["a", "text-red-500"],
+    ["g", "text-yellow-500"],
+    ["u", "text-blue-600"],
+    ["r", "text-green-600"],
+    ["u", "text-red-500"],
+  ] as const;
 
   return (
     <div
+      role="img"
       aria-label="Vishvaguru"
-      className={`${size} font-semibold tracking-[-0.055em] leading-none select-none`}
+      className={[
+        "group inline-flex items-center",
+        "select-none",
+        "font-semibold leading-none",
+        "tracking-[-0.065em]",
+        "transition-transform duration-200",
+        "hover:scale-[1.015]",
+        "motion-reduce:transition-none",
+        large ? "gap-3 sm:gap-4" : "gap-2",
+      ].join(" ")}
     >
-      <span className="text-blue-600">V</span>
-      <span className="text-red-500">i</span>
-      <span className="text-yellow-500">s</span>
-      <span className="text-blue-600">h</span>
-      <span className="text-green-600">v</span>
-      <span className="text-red-500">a</span>
-      <span className="text-yellow-500">g</span>
-      <span className="text-blue-600">u</span>
-      <span className="text-green-600">r</span>
-      <span className="text-red-500">u</span>
+      {/* Small colorful brand mark */}
+      <span
+        aria-hidden="true"
+        className={[
+          "relative inline-flex shrink-0 items-center justify-center",
+          "bg-white shadow-sm ring-1 ring-slate-200/80",
+          "transition-transform duration-300",
+          "group-hover:rotate-2 group-hover:scale-105",
+          "motion-reduce:transition-none",
+          large
+            ? "h-10 w-10 rounded-[13px] sm:h-14 sm:w-14 sm:rounded-[17px]"
+            : "h-7 w-7 rounded-[9px] sm:h-8 sm:w-8 sm:rounded-[10px]",
+        ].join(" ")}
+      >
+        {/* Soft multicolor border */}
+        <span
+          aria-hidden="true"
+          className="
+            absolute inset-0 rounded-[inherit]
+            bg-[conic-gradient(from_140deg,#2563eb,#ef4444,#eab308,#16a34a,#2563eb)]
+            opacity-90
+          "
+        />
+
+        {/* Inner surface */}
+        <span
+          aria-hidden="true"
+          className="
+            absolute inset-[2px] rounded-[inherit]
+            bg-white sm:inset-[3px]
+          "
+        />
+
+        {/* Mark */}
+        <span
+          className={[
+            "relative z-10 font-bold tracking-[-0.14em]",
+            "text-blue-600",
+            large ? "text-xl sm:text-3xl" : "text-sm sm:text-base",
+          ].join(" ")}
+        >
+          V
+        </span>
+
+        {/* Decorative accent dots */}
+        <span
+          aria-hidden="true"
+          className={[
+            "absolute -right-0.5 -top-0.5 rounded-full",
+            "bg-red-500 ring-2 ring-white",
+            large ? "h-2 w-2" : "h-1.5 w-1.5",
+          ].join(" ")}
+        />
+
+        <span
+          aria-hidden="true"
+          className={[
+            "absolute -bottom-0.5 -left-0.5 rounded-full",
+            "bg-yellow-400 ring-2 ring-white",
+            large ? "h-1.5 w-1.5" : "h-1 w-1",
+          ].join(" ")}
+        />
+      </span>
+
+      {/* Vishvaguru wordmark */}
+      <span className={size}>
+        {letters.map(([letter, color], index) => (
+          <span
+            key={`${letter}-${index}`}
+            aria-hidden="true"
+            className={[
+              "inline-block",
+              color,
+              "transition-transform duration-200",
+              "group-hover:-translate-y-px",
+              "motion-reduce:transition-none",
+            ].join(" ")}
+          >
+            {letter}
+          </span>
+        ))}
+      </span>
+
+      {/* Small badge only for the larger hero logo */}
+      {large && (
+        <span
+          className="
+            hidden items-center gap-1.5
+            rounded-full border border-amber-200
+            bg-amber-50 px-2.5 py-1
+            text-[9px] font-semibold uppercase
+            tracking-[0.13em] text-amber-700
+            sm:inline-flex
+          "
+        >
+          <span
+            aria-hidden="true"
+            className="
+              h-1.5 w-1.5 rounded-full bg-amber-400
+              motion-safe:animate-pulse
+            "
+          />
+          made in india
+        </span>
+      )}
     </div>
   );
 }
@@ -174,91 +288,326 @@ function SearchBar({
   onClear,
   compact = false,
 }: SearchBarProps) {
+  const [focused, setFocused] = useState(false);
+
+  const suggestions = [
+    "Universities in India",
+    "Scholarships for students",
+    "Study in USA",
+    "IELTS preparation",
+  ];
+
+  const showSuggestions = focused && !compact;
+
+  const handleSuggestion = (suggestion: string) => {
+    onChange(suggestion);
+
+    // Small delay gives the input state time to update
+    requestAnimationFrame(() => {
+      const form = document.querySelector(
+        'form[role="search"]',
+      ) as HTMLFormElement | null;
+
+      form?.requestSubmit();
+    });
+  };
+
   return (
-    <form
-      onSubmit={onSubmit}
-      role="search"
-      className={`w-full ${compact ? "max-w-2xl" : "max-w-[760px]"}`}
+    <div
+      className={`
+        relative mx-auto w-full
+        ${compact ? "max-w-[620px]" : "max-w-[680px]"}
+      `}
     >
-      <div
-        className={[
-          "group flex w-full items-center",
-          "rounded-full border border-black/10",
-          "bg-white/95 backdrop-blur-xl",
-          "shadow-[0_8px_35px_rgba(0,0,0,0.12)]",
-          "transition-all duration-200",
-          "focus-within:border-black/20",
-          "focus-within:shadow-[0_10px_45px_rgba(0,0,0,0.18)]",
-          compact
-            ? "min-h-[48px] sm:min-h-[52px]"
-            : "min-h-[54px] sm:min-h-[58px] lg:min-h-[62px]",
-        ].join(" ")}
-      >
+      <form onSubmit={onSubmit} role="search" className="relative w-full">
+        {/* Outer search shell */}
         <div
-          className={`flex shrink-0 items-center justify-center text-gray-500 ${
-            compact
-              ? "ml-4 h-8 w-8 sm:ml-5"
-              : "ml-4 h-9 w-9 sm:ml-5"
-          }`}
-        >
-          <SearchIcon
-            className={
-              compact
-                ? "h-[18px] w-[18px] sm:h-5 sm:w-5"
-                : "h-5 w-5 sm:h-[21px] sm:w-[21px]"
+          className={`
+            group relative flex w-full items-center
+            rounded-full
+            border
+            bg-white
+            transition-all duration-200 ease-out
+
+            ${
+              focused
+                ? `
+                  border-gray-300
+                  shadow-[0_4px_16px_rgba(32,33,36,0.16)]
+                `
+                : `
+                  border-gray-200
+                  shadow-[0_2px_8px_rgba(32,33,36,0.08)]
+                  hover:border-gray-300
+                  hover:shadow-[0_3px_12px_rgba(32,33,36,0.12)]
+                `
             }
+
+            ${compact ? "h-11" : "h-12 sm:h-[54px]"}
+          `}
+        >
+          {/* Search icon */}
+          <div
+            className="
+              ml-3
+              flex h-9 w-9 shrink-0
+              items-center justify-center
+              text-gray-500
+              sm:ml-4
+            "
+          >
+            <SearchIcon
+              className={compact ? "h-[17px] w-[17px]" : "h-[18px] w-[18px]"}
+            />
+          </div>
+
+          {/* Input */}
+          <input
+            type="search"
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => {
+              // Allow suggestion clicks to fire
+              setTimeout(() => setFocused(false), 120);
+            }}
+            placeholder={
+              compact ? "Search Vishvaguru" : "Search Vishvaguru or type a URL"
+            }
+            aria-label="Search Vishvaguru"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            enterKeyHint="search"
+            className="
+              min-w-0
+              flex-1
+              bg-transparent
+              px-2
+              text-[14px]
+              text-gray-800
+              outline-none
+              placeholder:text-gray-400
+              selection:bg-blue-100
+              sm:text-[15px]
+            "
           />
-        </div>
 
-        <input
-          type="search"
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder="Search Vishvaguru or type a URL"
-          aria-label="Search Vishvaguru"
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          enterKeyHint="search"
-          className={[
-            "min-w-0 flex-1 bg-transparent",
-            "border-0 outline-none",
-            "text-gray-900",
-            "placeholder:text-gray-400",
-            "selection:bg-blue-100",
-            compact
-              ? "px-3 text-[15px] sm:text-base"
-              : "px-3 text-[15px] sm:text-base lg:text-[17px]",
-          ].join(" ")}
-        />
+          {/* Right controls */}
+          <div className="mr-1.5 flex shrink-0 items-center gap-0.5 sm:mr-2">
+            {/* Clear */}
+            {value.length > 0 && (
+              <>
+                <button
+                  type="button"
+                  onClick={onClear}
+                  aria-label="Clear search"
+                  title="Clear"
+                  className="
+                    flex h-8 w-8
+                    items-center justify-center
+                    rounded-full
+                    text-gray-400
+                    transition
+                    hover:bg-gray-100
+                    hover:text-gray-700
+                    active:scale-95
+                  "
+                >
+                  <CloseIcon className="h-4 w-4" />
+                </button>
 
-        {value.length > 0 && (
-          <>
-            <div className="h-6 w-px shrink-0 bg-gray-200" />
+                <div className="mx-0.5 h-5 w-px bg-gray-200" />
+              </>
+            )}
 
+            {/* Voice search */}
             <button
               type="button"
-              onClick={onClear}
-              aria-label="Clear search"
-              title="Clear search"
-              className="mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 active:scale-95 sm:mr-2"
-            >
-              <CloseIcon className="h-[17px] w-[17px]" />
-            </button>
-          </>
-        )}
+              aria-label="Voice search"
+              title="Voice search"
+              className="
+                hidden h-9 w-9
+                items-center justify-center
+                rounded-full
+                text-gray-500
+                transition
+                hover:bg-gray-100
+                hover:text-gray-800
+                active:scale-95
+                sm:flex
+              "
+              onClick={() => {
+                if (
+                  typeof window === "undefined" ||
+                  !("webkitSpeechRecognition" in window)
+                ) {
+                  return;
+                }
 
-        <button
-          type="submit"
-          aria-label="Search"
-          title="Search"
-          className="mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-blue-600 transition hover:bg-blue-50 active:scale-95 sm:mr-2"
-        >
-          <SearchIcon className="h-[19px] w-[19px] sm:h-5 sm:w-5" />
-        </button>
-      </div>
-    </form>
+                const SpeechRecognition = (window as any)
+                  .webkitSpeechRecognition;
+
+                const recognition = new SpeechRecognition();
+
+                recognition.lang = "en-IN";
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onresult = (event: any) => {
+                  const transcript = event.results?.[0]?.[0]?.transcript || "";
+
+                  if (transcript) {
+                    onChange(transcript);
+                  }
+                };
+
+                recognition.start();
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                className="h-[18px] w-[18px]"
+              >
+                <rect x="9" y="3" width="6" height="11" rx="3" />
+                <path strokeLinecap="round" d="M5.5 11a6.5 6.5 0 0013 0" />
+                <path strokeLinecap="round" d="M12 17.5V21" />
+                <path strokeLinecap="round" d="M8.5 21h7" />
+              </svg>
+            </button>
+
+            {/* Search */}
+            <button
+              type="submit"
+              aria-label="Search"
+              title="Search"
+              className="
+                flex h-9 w-9
+                items-center justify-center
+                rounded-full
+                text-gray-500
+                transition-all
+                hover:bg-gray-100
+                hover:text-gray-900
+                active:scale-95
+              "
+            >
+              <SearchIcon className="h-[17px] w-[17px]" />
+            </button>
+          </div>
+        </div>
+
+        {/* Suggestions panel */}
+        {showSuggestions && (
+          <div
+            className="
+              absolute left-0 right-0 top-[calc(100%+8px)]
+              z-50
+              overflow-hidden
+              rounded-[20px]
+              border border-gray-200/80
+              bg-white
+              shadow-[0_12px_40px_rgba(32,33,36,0.14)]
+              animate-in
+              fade-in
+              slide-in-from-top-1
+              duration-150
+            "
+          >
+            {/* Search suggestion header */}
+            <div className="flex items-center justify-between px-4 pb-2 pt-3">
+              <span
+                className="
+                  text-[10px]
+                  font-bold
+                  uppercase
+                  tracking-[0.14em]
+                  text-gray-400
+                "
+              >
+                Explore
+              </span>
+
+              <span className="text-[10px] text-gray-400">Vishvaguru</span>
+            </div>
+
+            <div className="px-2 pb-2">
+              {suggestions.map((suggestion, index) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                    handleSuggestion(suggestion);
+                  }}
+                  className="
+                    group flex w-full
+                    items-center gap-3
+                    rounded-[13px]
+                    px-3 py-2.5
+                    text-left
+                    transition
+                    hover:bg-gray-50
+                  "
+                >
+                  <span
+                    className="
+                      flex h-8 w-8 shrink-0
+                      items-center justify-center
+                      rounded-full
+                      bg-gray-100
+                      text-gray-500
+                      transition
+                      group-hover:bg-blue-50
+                      group-hover:text-blue-600
+                    "
+                  >
+                    <SearchIcon className="h-3.5 w-3.5" />
+                  </span>
+
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium text-gray-700">
+                      {suggestion}
+                    </span>
+
+                    <span className="block truncate text-[11px] text-gray-400">
+                      Search on Vishvaguru
+                    </span>
+                  </span>
+
+                  <span className="hidden text-[10px] text-gray-300 transition group-hover:text-gray-500 sm:block">
+                    ↵
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Bottom utility */}
+            <div
+              className="
+                border-t border-gray-100
+                bg-gray-50/70
+                px-4 py-2.5
+              "
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-gray-400">
+                  Search smarter with Vishvaguru
+                </span>
+
+                <span className="text-[10px] font-medium text-gray-400">
+                  India
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+      </form>
+    </div>
   );
 }
 
@@ -310,21 +659,20 @@ export default function HomePage() {
   }, [submittedQuery]);
 
   return (
-    <div className="relative min-h-[calc(70vh-80px)] w-full overflow-hidden bg-white text-gray-900">
+    <div className="relative h-[100vh] w-full overflow-hidden  bg-white text-gray-900">
       {!hasSearched ? (
         /*
          * ============================================================
          * HOME / SEARCH ENGINE LANDING
          * ============================================================
          */
-        <main className="relative flex min-h-[100svh] h-full object-cover w-full items-center justify-center overflow-hidden">
+        <main className="relative flex  h-full object-cover w-full items-center justify-center overflow-hidden">
           {/* Background image - Using external URL for demo */}
           <div
             aria-hidden="true"
             className="absolute  object-cover inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage:
-                "url('/vishav.png')",
+              backgroundImage: "url('/vishav.png')",
             }}
           />
 
@@ -344,73 +692,25 @@ export default function HomePage() {
           />
 
           {/* Main search content */}
-          <section className="relative z-10 flex w-full flex-col items-center px-4 py-24 text-center sm:px-6 md:py-28 lg:px-8">
+          <section className="relative z-10 flex w-full flex-col items-center px-4 py-20 text-center sm:px-6 sm:py-24 md:py-28 lg:px-8">
             <div className="flex w-full max-w-5xl flex-col items-center">
               {/* Brand */}
               <div className="mb-5 sm:mb-7 md:mb-8">
                 <VishvaguruLogo large />
               </div>
 
-              {/* Coming Soon Badge */}
-              <div className="mb-8">
-                <div
-                  className="
-          group inline-flex items-center gap-2.5
-          rounded-full
-          border border-white/20
-          bg-white/[0.08]
-          px-4 py-2
-          shadow-[0_8px_30px_rgba(0,0,0,0.12)]
-          backdrop-blur-xl
-          transition-all duration-300
-          hover:border-white/30
-          hover:bg-white/[0.13]
-          hover:shadow-[0_10px_40px_rgba(0,0,0,0.18)]
-        "
-                >
-                  {/* Live indicator */}
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                  </span>
-
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/60 sm:text-xs">
-                    Vishvaguru
-                  </span>
-
-                  <span className="h-3 w-px bg-white/20" />
-
-                  <span className="text-xs font-medium text-white/90 sm:text-sm">
-                    India's First Search Engine
-                  </span>
-
-                  <span
-                    className="
-            rounded-full
-            border border-amber-300/20
-            bg-amber-300/10
-            px-2.5 py-1
-            text-[9px] font-bold uppercase
-            tracking-[0.12em]
-            text-amber-200
-            sm:text-[10px]
-          "
-                  >
-                    Coming Soon
-                  </span>
-                </div>
+              {/* Search */}
+              <div className="w-full">
+                <SearchBar
+                  value={query}
+                  onChange={setQuery}
+                  onSubmit={handleSubmit}
+                  onClear={handleClear}
+                />
               </div>
 
-              {/* Search */}
-              <SearchBar
-                value={query}
-                onChange={setQuery}
-                onSubmit={handleSubmit}
-                onClear={handleClear}
-              />
-
-              {/* Desktop search buttons */}
-              <div className="mt-7 hidden items-center justify-center gap-3 sm:flex">
+              {/* Desktop search button */}
+              <div className="mt-6 hidden items-center justify-center gap-3 sm:flex">
                 <button
                   type="button"
                   onClick={() => {
@@ -442,112 +742,24 @@ export default function HomePage() {
                 </button>
               </div>
 
-              {/* Audio / Vishvaguru Voice */}
-              <div className="mt-9 w-full max-w-[560px]">
-                <div
-                  className="
-          group relative overflow-hidden
-          rounded-2xl
-          border border-white/15
-          bg-black/20
-          p-3
-          shadow-[0_20px_60px_rgba(0,0,0,0.15)]
-          backdrop-blur-2xl
-          transition-all duration-300
-          hover:border-white/25
-          hover:bg-black/25
-        "
-                >
-                  {/* Subtle glow */}
-                  <div
-                    className="
-            pointer-events-none absolute
-            -left-20 -top-20
-            h-40 w-40
-            rounded-full
-            bg-cyan-400/10
-            blur-3xl
-          "
-                  />
-
-                  <div className="relative flex items-center gap-3">
-                    {/* Audio icon */}
-                    <div
-                      className="
-              flex h-11 w-11 shrink-0
-              items-center justify-center
-              rounded-xl
-              border border-white/10
-              bg-white/10
-              text-white
-              shadow-inner
-            "
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        className="h-5 w-5"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M11 5L6 9H3v6h3l5 4V5z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.5 8.5a5 5 0 010 7"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M18.5 6a9 9 0 010 12"
-                        />
-                      </svg>
-                    </div>
-
-                    {/* Text */}
-                    <div className="min-w-0 flex-1 text-left">
-                      <div className="flex items-center gap-2">
-                        <p className="truncate text-sm font-semibold text-white">
-                          Vishvaguru Voice
-                        </p>
-
-                        <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/50">
-                          Preview
-                        </span>
-                      </div>
-
-                      <p className="mt-0.5 text-xs text-white/45">
-                        Listen to the Vishvaguru experience
-                      </p>
-                    </div>
-
-                    {/* Native audio controls */}
-                    <audio
-                      controls
-                      preload="metadata"
-                      className="
-              h-9
-              w-[250px]
-              max-w-[42vw]
-              opacity-90
-            "
-                    >
-                      <source src="audia\vishavguru.mp3" type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  </div>
-                </div>
-              </div>
+              {/* Vishvaguru Voice */}
 
               {/* Popular searches */}
-              <div className="mt-7 flex w-full max-w-[760px] flex-wrap items-center justify-center gap-2 sm:mt-9">
+              <div
+                className="
+        mt-7
+        flex w-full max-w-[760px]
+        flex-wrap
+        items-center
+        justify-center
+        gap-2
+        sm:mt-9
+      "
+              >
                 <span
                   className="
-          mr-1 rounded-full
+          mr-1
+          rounded-full
           bg-black/20
           px-3 py-1.5
           text-xs font-medium
@@ -576,8 +788,8 @@ export default function HomePage() {
             backdrop-blur-md
             transition-all duration-200
             hover:-translate-y-0.5
-            hover:bg-white/25
             hover:border-white/35
+            hover:bg-white/25
             active:scale-[0.97]
             sm:text-sm
           "
@@ -587,16 +799,272 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-            <div className="w-full max-w-[920px] mt-4">
-              <Visitor />
+
+            {/* Visitor */}
+            <div className="mt-5 w-full max-w-[760px] sm:mt-6">
+              <div className="grid w-full grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
+                {/* ───────────────── VOICE CARD ───────────────── */}
+                <div
+                  className="
+    group relative isolate
+    h-[158px] w-full
+    overflow-hidden rounded-[22px]
+    border border-white/[0.14]
+    bg-black/[0.28]
+    p-3
+    shadow-[0_18px_50px_rgba(0,0,0,0.18)]
+    backdrop-blur-2xl
+    transition-all duration-300
+    hover:-translate-y-1
+    hover:border-cyan-300/20
+    hover:bg-black/[0.34]
+    sm:h-[145px]
+    sm:p-3
+  "
+                >
+                  {/* Cyan ambient glow */}
+                  <div
+                    aria-hidden="true"
+                    className="
+      pointer-events-none absolute
+      -left-14 -top-10
+      h-20 w-20
+      rounded-full
+      bg-cyan-400/10
+      blur-3xl
+      transition-all duration-500
+      group-hover:bg-cyan-400/20
+    "
+                  />
+
+                  {/* Main content */}
+                  <div className="relative flex h-full flex-col">
+                    {/* Header */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex min-w-0 items-center gap-2">
+                        {/* Voice icon */}
+                        <div
+                          className="
+            flex h-8 w-8 shrink-0
+            items-center justify-center
+            rounded-[10px]
+            border border-white/10
+            bg-white/[0.08]
+            text-cyan-300
+            shadow-inner
+            sm:h-9 sm:w-9
+          "
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="h-[15px] w-[15px]"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M11 5L6 9H3v6h3l5 4V5z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.5 8.5a5 5 0 010 7"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M18.5 6a9 9 0 010 12"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* Text */}
+                        <div className="min-w-0">
+                          <div className="flex min-w-0 items-center gap-1.5">
+                            <p
+                              className="
+                truncate
+                text-[11px]
+                font-bold
+                leading-none
+                text-white
+                sm:text-[12px]
+              "
+                            >
+                              Vishvaguru Voice
+                            </p>
+
+                            <span
+                              className="
+                shrink-0
+                rounded-full
+                bg-cyan-400/10
+                px-1.5 py-0.5
+                text-[7px]
+                font-bold
+                uppercase
+                tracking-[0.12em]
+                text-cyan-300
+              "
+                            >
+                              Preview
+                            </span>
+                          </div>
+
+                          <p
+                            className="
+              mt-1
+              truncate
+              text-[9px]
+              leading-none
+              text-white/40
+              sm:text-[10px]
+            "
+                          >
+                            Listen to the experience
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Card number */}
+                      <span
+                        className="
+          flex h-6 w-6 shrink-0
+          items-center justify-center
+          rounded-full
+          border border-white/10
+          bg-white/[0.05]
+          text-[8px]
+          font-medium
+          text-white/40
+        "
+                      >
+                        01
+                      </span>
+                    </div>
+
+                    {/* Small spacer */}
+                    <div className="flex-1 min-h-[12px]" />
+
+                    {/* Audio area */}
+                    <div
+                      className="
+        rounded-[14px]
+        border border-white/[0.08]
+        bg-white/[0.035]
+        px-2 py-1.5
+        sm:px-2.5
+        sm:py-2
+      "
+                    >
+                      <div className="mb-1 flex items-center justify-between">
+                        <span
+                          className="
+            text-[7px]
+            font-bold
+            uppercase
+            tracking-[0.15em]
+            leading-none
+            text-white/30
+          "
+                        >
+                          Vishvaguru Audio
+                        </span>
+
+                        <span
+                          className="
+            flex items-center gap-1
+            text-[7px]
+            font-semibold
+            leading-none
+            text-emerald-300/70
+          "
+                        >
+                          <span
+                            className="
+              h-1 w-1
+              animate-pulse
+              rounded-full
+              bg-emerald-400
+            "
+                          />
+                          Ready
+                        </span>
+                      </div>
+
+                      <audio
+                        controls
+                        preload="metadata"
+                        className="
+          block
+          h-8
+          w-full
+          min-w-0
+          opacity-80
+          transition-opacity
+          group-hover:opacity-100
+        "
+                      >
+                        <source src="/audia/vishavguru.mp3" type="audio/mpeg" />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  </div>
+
+                  {/* Bottom cyan accent */}
+                  <div
+                    aria-hidden="true"
+                    className="
+      absolute bottom-0 left-0
+      h-[2px] w-full
+      bg-gradient-to-r
+      from-transparent
+      via-cyan-400/60
+      to-transparent
+      opacity-60
+      transition-opacity duration-300
+      group-hover:opacity-100
+    "
+                  />
+                </div>
+
+                {/* ───────────────── VISITOR CARD ───────────────── */}
+                <Visitor />
+              </div>
             </div>
           </section>
 
           {/* Small bottom hint */}
-          <div className="absolute bottom-1 left-0 right-0 z-10 px-4 text-center">
-            <p className="text-[11px] font-medium tracking-wide text-white/75 sm:text-xs">
-              Search knowledge. Discover India. Explore the world.
-            </p>
+          <div className="absolute w-96 inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-2">
+            <div
+              className="
+      group flex h-7 items-center gap-2
+      rounded-full
+      border border-white/[0.08]
+      bg-black/65
+      px-3.5
+      backdrop-blur-xl
+      shadow-[0_8px_30px_rgba(0,0,0,0.4)]
+    "
+            >
+              {/* Status */}
+              <span className="relative flex h-1.5 w-1.5 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/50" />
+                <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              </span>
+
+              <p className="whitespace-nowrap text-[9px] font-medium tracking-[0.08em] text-white/55 sm:text-[10px]">
+                <span className="text-white/85">
+                  India’s First Search Engine
+                </span>
+                <span className="mx-1.5 text-white/20">•</span>
+                <span className="text-emerald-400/90">Coming Soon</span>
+                <span className="mx-1.5 text-white/20">•</span>
+                Made in India 🇮🇳
+              </p>
+            </div>
           </div>
         </main>
       ) : (
@@ -608,33 +1076,45 @@ export default function HomePage() {
         <main className="min-h-[100svh] w-full bg-white">
           {/* Search area — not a navbar/header */}
           <div className="sticky top-[70px] z-30 border-b border-gray-200/80 bg-white/95 px-3 py-3 shadow-sm backdrop-blur-xl sm:px-5 sm:py-4 lg:px-8">
-            <div className="mx-auto flex w-full max-w-6xl items-center gap-3">
+            {/* Search header */}
+            <div className="relative mx-auto flex w-full max-w-6xl items-center justify-center">
               {/* Compact logo */}
               <button
                 type="button"
                 onClick={handleClear}
                 aria-label="Go to Vishvaguru home"
-                className="hidden shrink-0 sm:block"
+                className="
+        absolute left-0
+        hidden shrink-0
+        sm:block
+      "
               >
                 <VishvaguruLogo />
               </button>
 
-              {/* Search */}
-              <SearchBar
-                value={query}
-                onChange={setQuery}
-                onSubmit={handleSubmit}
-                onClear={handleClear}
-                compact
-              />
+              {/* Centered search */}
+              <div className="w-full max-w-[620px]">
+                <SearchBar
+                  value={query}
+                  onChange={setQuery}
+                  onSubmit={handleSubmit}
+                  onClear={handleClear}
+                  compact
+                />
+              </div>
             </div>
 
             {/* Search categories */}
-            <div className="mx-auto mt-3 flex w-full max-w-6xl overflow-x-auto scrollbar-none">
+            <div className="mx-auto mt-3 w-full max-w-6xl overflow-x-auto scrollbar-none">
               <div className="flex min-w-max items-center gap-5 px-1 text-sm">
                 <button
                   type="button"
-                  className="border-b-2 border-blue-600 pb-2 font-medium text-blue-600"
+                  className="
+          border-b-2 border-blue-600
+          pb-2
+          font-medium
+          text-blue-600
+        "
                 >
                   All
                 </button>
@@ -643,7 +1123,13 @@ export default function HomePage() {
                   <button
                     key={item}
                     type="button"
-                    className="border-b-2 border-transparent pb-2 text-gray-600 transition hover:text-gray-900"
+                    className="
+            border-b-2 border-transparent
+            pb-2
+            text-gray-600
+            transition
+            hover:text-gray-900
+          "
                   >
                     {item}
                   </button>
