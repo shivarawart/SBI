@@ -159,7 +159,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 };
 
   return (
-    <main className="relative min-h-[calc(100svh-80px)] overflow-hidden bg-[#070604] text-white">
+    <main className="relative top-5 min-h-[calc(100svh-80px)] overflow-hidden bg-[#070604] text-white">
       {/* =========================================================
           BACKGROUND
       ========================================================= */}
@@ -187,7 +187,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
           CONTENT
       ========================================================= */}
 
-      <div className="relative z-10 mx-auto w-full max-w-[1450px] px-5 pb-10 pt-8 sm:px-8 sm:pt-12 lg:px-12">
+      <div className="relative z-10 top-12 mx-auto w-full max-w-[1450px] px-5 pb-10 pt-8 sm:px-8 sm:pt-12 lg:px-12">
         {/* =======================================================
             TOP BAR
         ======================================================= */}

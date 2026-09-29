@@ -709,45 +709,9 @@ export default function HomePage() {
                 />
               </div>
 
-              {/* Desktop search button */}
-              <div className="mt-6 hidden items-center justify-center gap-3 sm:flex">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const firstResult = SEARCH_RESULTS[0];
-
-                    if (firstResult) {
-                      setQuery(firstResult.title);
-                      setSubmittedQuery(firstResult.title);
-                      setHasSearched(true);
-                    }
-                  }}
-                  className="
-          rounded-lg
-          border border-white/20
-          bg-white/70
-          px-5 py-2.5
-          text-sm font-medium
-          text-gray-800
-          shadow-sm
-          backdrop-blur-md
-          transition-all duration-200
-          hover:-translate-y-0.5
-          hover:bg-white
-          hover:shadow-md
-          active:scale-[0.98]
-        "
-                >
-                  Top Universities in India
-                </button>
-              </div>
-
-              {/* Vishvaguru Voice */}
-
-              {/* Popular searches */}
               <div
                 className="
-        mt-7
+        mt-2
         flex w-full max-w-[760px]
         flex-wrap
         items-center
@@ -801,245 +765,73 @@ export default function HomePage() {
             </div>
 
             {/* Visitor */}
-            <div className="mt-5 w-full max-w-[760px] sm:mt-6">
-              <div className="grid w-full grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
-                {/* ───────────────── VOICE CARD ───────────────── */}
-                <div
-                  className="
-    group relative isolate
-    h-[158px] w-full
-    overflow-hidden rounded-[22px]
-    border border-white/[0.14]
-    bg-black/[0.28]
-    p-3
-    shadow-[0_18px_50px_rgba(0,0,0,0.18)]
-    backdrop-blur-2xl
-    transition-all duration-300
-    hover:-translate-y-1
-    hover:border-cyan-300/20
-    hover:bg-black/[0.34]
-    sm:h-[145px]
-    sm:p-3
-  "
-                >
-                  {/* Cyan ambient glow */}
-                  <div
-                    aria-hidden="true"
-                    className="
-      pointer-events-none absolute
-      -left-14 -top-10
-      h-20 w-20
-      rounded-full
-      bg-cyan-400/10
-      blur-3xl
-      transition-all duration-500
-      group-hover:bg-cyan-400/20
-    "
-                  />
 
-                  {/* Main content */}
-                  <div className="relative flex h-full flex-col">
-                    {/* Header */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex min-w-0 items-center gap-2">
-                        {/* Voice icon */}
-                        <div
-                          className="
-            flex h-8 w-8 shrink-0
-            items-center justify-center
-            rounded-[10px]
-            border border-white/10
-            bg-white/[0.08]
-            text-cyan-300
-            shadow-inner
-            sm:h-9 sm:w-9
-          "
-                        >
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            className="h-[15px] w-[15px]"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M11 5L6 9H3v6h3l5 4V5z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15.5 8.5a5 5 0 010 7"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M18.5 6a9 9 0 010 12"
-                            />
-                          </svg>
-                        </div>
-
-                        {/* Text */}
-                        <div className="min-w-0">
-                          <div className="flex min-w-0 items-center gap-1.5">
-                            <p
-                              className="
-                truncate
-                text-[11px]
-                font-bold
-                leading-none
-                text-white
-                sm:text-[12px]
-              "
-                            >
-                              Vishvaguru Voice
-                            </p>
-
-                            <span
-                              className="
-                shrink-0
-                rounded-full
-                bg-cyan-400/10
-                px-1.5 py-0.5
-                text-[7px]
-                font-bold
-                uppercase
-                tracking-[0.12em]
-                text-cyan-300
-              "
-                            >
-                              Preview
-                            </span>
-                          </div>
-
-                          <p
-                            className="
-              mt-1
-              truncate
-              text-[9px]
-              leading-none
-              text-white/40
-              sm:text-[10px]
-            "
-                          >
-                            Listen to the experience
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Card number */}
-                      <span
-                        className="
-          flex h-6 w-6 shrink-0
-          items-center justify-center
-          rounded-full
-          border border-white/10
-          bg-white/[0.05]
-          text-[8px]
-          font-medium
-          text-white/40
-        "
-                      >
-                        01
-                      </span>
-                    </div>
-
-                    {/* Small spacer */}
-                    <div className="flex-1 min-h-[12px]" />
-
-                    {/* Audio area */}
-                    <div
-                      className="
+            <div className="mt-5 w-full max-w-[700px] sm:mt-6">
+  <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+    
+    {/* ───────────────── VOICE CARD ───────────────── */}
+    <div
+      className="
+        group
+        min-w-0
+        flex-1
         rounded-[14px]
         border border-white/[0.08]
         bg-white/[0.035]
-        px-2 py-1.5
-        sm:px-2.5
-        sm:py-2
+        p-2
+        backdrop-blur-xl
+        transition-all duration-300
+        hover:border-white/[0.13]
+        hover:bg-white/[0.05]
       "
-                    >
-                      <div className="mb-1 flex items-center justify-between">
-                        <span
-                          className="
-            text-[7px]
-            font-bold
-            uppercase
-            tracking-[0.15em]
-            leading-none
-            text-white/30
-          "
-                        >
-                          Vishvaguru Audio
-                        </span>
-
-                        <span
-                          className="
-            flex items-center gap-1
-            text-[7px]
-            font-semibold
-            leading-none
-            text-emerald-300/70
-          "
-                        >
-                          <span
-                            className="
-              h-1 w-1
-              animate-pulse
-              rounded-full
-              bg-emerald-400
-            "
-                          />
-                          Ready
-                        </span>
-                      </div>
-
-                      <audio
-                        controls
-                        preload="metadata"
-                        className="
-          block
-          h-8
-          w-full
-          min-w-0
-          opacity-80
-          transition-opacity
-          group-hover:opacity-100
+    >
+      <div
+        className="
+          flex min-w-0
+          items-center
+          overflow-hidden
+          rounded-[9px]
+          border border-white/[0.06]
+          bg-black/20
+          px-1
         "
-                      >
-                        <source src="/audia/vishavguru.mp3" type="audio/mpeg" />
-                        Your browser does not support the audio element.
-                      </audio>
-                    </div>
-                  </div>
+      >
+        <audio
+          controls
+          preload="metadata"
+          className="
+            block
+            h-7
+            min-w-0
+            flex-1
+            opacity-75
+            transition-opacity
+            duration-300
+            group-hover:opacity-100
+          "
+        >
+          <source
+            src="/audia/vishavguru.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+    </div>
 
-                  {/* Bottom cyan accent */}
-                  <div
-                    aria-hidden="true"
-                    className="
-      absolute bottom-0 left-0
-      h-[2px] w-full
-      bg-gradient-to-r
-      from-transparent
-      via-cyan-400/60
-      to-transparent
-      opacity-60
-      transition-opacity duration-300
-      group-hover:opacity-100
-    "
-                  />
-                </div>
+    {/* ───────────────── VISITOR CARD ───────────────── */}
+    <div className="min-w-0 flex-1">
+      <Visitor />
+    </div>
 
-                {/* ───────────────── VISITOR CARD ───────────────── */}
-                <Visitor />
-              </div>
-            </div>
+  </div>
+</div>
           </section>
 
           {/* Small bottom hint */}
-          <div className="absolute w-96 inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-2">
-            <div
-              className="
+          <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-2">
+  <div
+    className="
       group flex h-7 items-center gap-2
       rounded-full
       border border-white/[0.08]
@@ -1047,25 +839,36 @@ export default function HomePage() {
       px-3.5
       backdrop-blur-xl
       shadow-[0_8px_30px_rgba(0,0,0,0.4)]
+      transition-all duration-300
+      hover:border-white/[0.14]
+      hover:bg-black/75
     "
-            >
-              {/* Status */}
-              <span className="relative flex h-1.5 w-1.5 shrink-0">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/50" />
-                <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              </span>
+  >
+    {/* Status */}
+    <span className="relative flex h-1.5 w-1.5 shrink-0">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/50" />
+      <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400" />
+    </span>
 
-              <p className="whitespace-nowrap text-[9px] font-medium tracking-[0.08em] text-white/55 sm:text-[10px]">
-                <span className="text-white/85">
-                  India’s First Search Engine
-                </span>
-                <span className="mx-1.5 text-white/20">•</span>
-                <span className="text-emerald-400/90">Coming Soon</span>
-                <span className="mx-1.5 text-white/20">•</span>
-                Made in India 🇮🇳
-              </p>
-            </div>
-          </div>
+    <p className="whitespace-nowrap text-[9px] font-medium tracking-[0.06em] text-white/50 sm:text-[10px]">
+      <span className="font-semibold text-white/85">
+        Vishvaguru Search
+      </span>
+
+      <span className="mx-1.5 text-white/20">•</span>
+
+      <span className="text-emerald-400/90">
+        Made in India Project
+      </span>
+
+      <span className="mx-1.5 text-white/20">•</span>
+
+      <span className="text-white/45">
+        Coming Soon
+      </span>
+    </p>
+  </div>
+</div>
         </main>
       ) : (
         /*

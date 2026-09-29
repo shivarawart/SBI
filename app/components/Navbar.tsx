@@ -14,6 +14,7 @@ const navItems = [
   { label: "Search", href: "/" },
   { label: "Videos", href: "/media" },
   { label: "Contact", href: "/contect" },
+  { label: "info", href:"/info"}
 ];
 
 export default function Navbar({
@@ -66,11 +67,11 @@ export default function Navbar({
         aria-hidden="true"
         className="
           pointer-events-none absolute
-          -top-24 left-1/2
-          h-32 w-72
+          -top-24 left-2
+          h-30 w-70
           -translate-x-1/2
           rounded-full
-          bg-amber-500/[0.07]
+          bg-amber-800/[0.07]
           blur-3xl
         "
       />
@@ -79,179 +80,148 @@ export default function Navbar({
         className="
           relative mx-auto flex h-full max-w-7xl
           items-center justify-between
-          px-4 sm:px-6 lg:px-8
+          px-2 sm:px-6 lg:px-8
         "
       >
         {/* =========================================================
             LOGO
         ========================================================= */}
-
+      
         <Link
-  href="/"
-  onClick={closeMenu}
-  aria-label="Vishvaguru home — coming soon"
-  className="group relative flex items-center gap-2.5 outline-none"
->
-  {/* Logo mark */}
-  <span
-    className="
-      relative flex h-9 w-9 shrink-0
+          href="/"
+          onClick={closeMenu}
+          aria-label="Vishvaguru home — coming soon"
+          className="
+    group relative
+    flex min-w-0
+    items-center gap-2.5
+    outline-none
+  "
+        >
+          {/* ───────────────── LOGO MARK ───────────────── */}
+          <span
+            aria-hidden="true"
+            className="
+      relative flex
+      h-9 w-9 shrink-0
       items-center justify-center
-      overflow-hidden rounded-[11px]
+      overflow-hidden
+      rounded-[11px]
       border border-amber-300/20
       bg-gradient-to-br
       from-amber-300
       via-orange-500
       to-red-700
-      shadow-[0_0_26px_rgba(245,158,11,0.14)]
+      shadow-[0_0_22px_rgba(245,158,11,0.12)]
       transition-all duration-500 ease-out
       group-hover:scale-105
       group-hover:-rotate-2
-      group-hover:border-amber-300/50
-      group-hover:shadow-[0_0_34px_rgba(245,158,11,0.3)]
+      group-hover:border-amber-300/45
+      group-hover:shadow-[0_0_30px_rgba(245,158,11,0.25)]
       group-active:scale-95
     "
-  >
-    {/* Ambient glow */}
-    <span
-      aria-hidden="true"
-      className="
-        absolute -inset-1
-        rounded-2xl
-        bg-gradient-to-r
-        from-amber-400/0
-        via-orange-400/20
-        to-red-500/0
+          >
+            {/* Glow */}
+            <span
+              className="
+        pointer-events-none
+        absolute -inset-3
+        rounded-full
+        bg-orange-400/20
         opacity-0
-        blur-md
+        blur-xl
         transition-opacity duration-500
         group-hover:opacity-100
       "
-    />
+            />
 
-    {/* Moving shine */}
-    <span
-      aria-hidden="true"
-      className="
-        absolute inset-0 z-10
-        -translate-x-[140%]
+            {/* Shine */}
+            <span
+              className="
+        pointer-events-none
+        absolute inset-y-0 -left-[120%]
+        z-10 w-[55%]
         skew-x-[-20deg]
         bg-gradient-to-r
         from-transparent
-        via-white/40
+        via-white/45
         to-transparent
-        transition-transform duration-700
-        group-hover:translate-x-[140%]
+        transition-all duration-700
+        group-hover:left-[150%]
       "
-    />
+            />
 
-    {/* Inner border */}
-    <span
-      aria-hidden="true"
-      className="
-        absolute inset-1
-        rounded-[8px]
-        border border-white/15
+            {/* Inner frame */}
+            <span
+              className="
+        pointer-events-none
+        absolute inset-[4px]
+        rounded-[7px]
+        border border-white/20
       "
-    />
+            />
 
-    {/* V */}
-    <span
-      className="
+            {/* V */}
+            <span
+              className="
         relative z-20
         select-none
         text-[14px]
         font-black
-        tracking-[-0.08em]
+        leading-none
+        tracking-[-0.12em]
         text-white
         drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]
         transition-transform duration-500
         group-hover:scale-110
       "
-    >
-      V
-    </span>
-  </span>
+            >
+              V
+            </span>
+          </span>
 
-  {/* Coming Soon label */}
-  <span
-    className="
-      relative
-      flex items-center gap-1.5
-      whitespace-nowrap
-      rounded-full
-      border border-white/[0.09]
-      bg-white/[0.045]
-      px-2.5 py-1.5
-      backdrop-blur-md
-      transition-all duration-300
-      group-hover:border-amber-300/20
-      group-hover:bg-white/[0.07]
-    "
-  >
-    {/* Live dot */}
-    <span
-      aria-hidden="true"
-      className="
-        relative flex h-1.5 w-1.5
-        shrink-0
-        items-center justify-center
-      "
-    >
-      <span
-        className="
-          absolute h-full w-full
-          animate-ping
-          rounded-full
-          bg-amber-300/60
+          {/* ───────────────── WORDMARK ───────────────── */}
+          <span className="flex min-w-0 flex-col justify-center">
+            <span className="flex items-center gap-2">
+              <span
+                className="
+          truncate
+          text-[15px]
+          font-black
+          leading-none
+          tracking-[-0.045em]
+          text-white
+          transition-all duration-300
+          group-hover:text-amber-100
         "
-      />
-      <span
-        className="
-          relative h-1.5 w-1.5
-          rounded-full
-          bg-amber-300
-          shadow-[0_0_8px_rgba(251,191,36,0.9)]
-        "
-      />
-    </span>
+              >
+                Vishvaguru
+              </span>
 
-    <span
-      className="
-        text-[9px]
-        font-bold
-        uppercase
-        tracking-[0.16em]
-        text-white/65
+             
+            </span>
+
+            {/* Tagline */}
+            <span
+              className="
+        mt-1
+        text-[7px]
+        font-medium
+        leading-none
+        tracking-[0.08em]
+        text-white/30
         transition-colors duration-300
-        group-hover:text-amber-100
+        group-hover:text-white/45
       "
-    >
-      Coming Soon
-    </span>
-  </span>
-
-  {/* Tiny premium indicator */}
-  <span
-    aria-hidden="true"
-    className="
-      absolute -right-1.5 -top-1
-      h-1 w-1
-      rounded-full
-      bg-amber-300
-      opacity-0
-      shadow-[0_0_10px_rgba(251,191,36,0.9)]
-      transition-all duration-500
-      group-hover:scale-125
-      group-hover:opacity-100
-    "
-  />
-</Link>
-
+            >
+              India’s search engine
+            </span>
+          </span>
+        </Link>
+       
         {/* =========================================================
             DESKTOP NAVIGATION
         ========================================================= */}
-
         <div className="hidden items-center gap-4 md:flex">
           {/* Navigation */}
           <div
@@ -491,11 +461,9 @@ export default function Navbar({
             </div>
           )}
         </div>
-
         {/* =========================================================
             MOBILE MENU BUTTON
         ========================================================= */}
-
         <button
           type="button"
           aria-label={open ? "Close navigation menu" : "Open navigation menu"}
