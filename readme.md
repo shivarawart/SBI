@@ -1,50 +1,29 @@
-search-engine/
-├── public/
-│   ├── images/
-│   │   └── hero.jpg
-│   └── videos/
+your-project/
 │
-├── src/
-│   ├── app/
-│   │   ├── page.tsx                 # Home / Search
-│   │   ├── search/
-│   │   │   └── page.tsx             # Search results
-│   │   ├── owner/
-│   │   │   ├── login/
-│   │   │   │   └── page.tsx         # Owner login
-│   │   │   └── dashboard/
-│   │   │       └── page.tsx         # Upload / Update / Delete
-│   │   ├── contact/
-│   │   │   └── page.tsx
-│   │   ├── layout.tsx
-│   │   └── globals.css
+├── app/
 │   │
-│   ├── components/
-│   │   ├── Navbar.tsx
-│   │   ├── HeroSearch.tsx
-│   │   ├── SearchBar.tsx
-│   │   ├── VideoCard.tsx
-│   │   ├── VideoGrid.tsx
-│   │   ├── Stats.tsx
-│   │   └── Footer.tsx
+│   ├── owner/
+│   │   └── page.tsx
 │   │
-│   ├── lib/
-│   │   ├── videos.ts                # Video CRUD logic
-│   │   ├── analytics.ts             # Visits / searches / views
-│   │   └── auth.ts                  # Temporary owner login
+│   ├── videos/
+│   │   └── page.tsx
 │   │
-│   ├── hooks/
-│   │   └── useVideos.ts
-│   │
-│   ├── animations/
-│   │   ├── hero.ts
-│   │   ├── scroll.ts
-│   │   └── page.ts
-│   │
-│   └── types/
-│       └── index.ts
+│   └── api/
+│       │
+│       ├── owners/
+│       │   ├── route.ts
+│       │   └── verify/
+│       │       └── route.ts
+│       │
+│       └── videos/
+│           └── route.ts
 │
+├── lib/
+│   └── db.ts
+│
+├── db/
+│   └── schema.sql
+│
+├── .env.local
 ├── package.json
-├── next.config.ts
-├── tsconfig.json
-└── tailwind.config.ts
+└── tsconfig.json

@@ -266,7 +266,7 @@ function VishvaguruLogo({ large = false }: { large?: boolean }) {
               motion-safe:animate-pulse
             "
           />
-          made in india
+          make in india
         </span>
       )}
     </div>
@@ -765,110 +765,104 @@ export default function HomePage() {
             </div>
 
             {/* Visitor */}
-
-            <div className="mt-5 w-full max-w-[700px] sm:mt-6">
-  <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-    
-    {/* ───────────────── VOICE CARD ───────────────── */}
-    <div
-      className="
-        group
-        min-w-0
-        flex-1
-        rounded-[14px]
-        border border-white/[0.08]
-        bg-white/[0.035]
-        p-2
-        backdrop-blur-xl
-        transition-all duration-300
-        hover:border-white/[0.13]
-        hover:bg-white/[0.05]
-      "
-    >
-      <div
-        className="
-          flex min-w-0
-          items-center
-          overflow-hidden
-          rounded-[9px]
-          border border-white/[0.06]
-          bg-black/20
-          px-1
-        "
-      >
-        <audio
-          controls
-          preload="metadata"
-          className="
-            block
-            h-7
-            min-w-0
-            flex-1
-            opacity-75
-            transition-opacity
-            duration-300
-            group-hover:opacity-100
-          "
-        >
-          <source
-            src="/audia/vishavguru.mp3"
-            type="audio/mpeg"
-          />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-    </div>
-
-    {/* ───────────────── VISITOR CARD ───────────────── */}
-    <div className="min-w-0 flex-1">
-      <Visitor />
-    </div>
-
-  </div>
-</div>
           </section>
 
-          {/* Small bottom hint */}
-          <div className="absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-2">
-  <div
-    className="
-      group flex h-7 items-center gap-2
-      rounded-full
-      border border-white/[0.08]
-      bg-black/65
-      px-3.5
-      backdrop-blur-xl
-      shadow-[0_8px_30px_rgba(0,0,0,0.4)]
-      transition-all duration-300
-      hover:border-white/[0.14]
-      hover:bg-black/75
+          <div className="absolute inset-x-0 bottom-0 z-20 px-2 pb-2 sm:px-4">
+            <div
+              className="
+      mx-auto flex w-full max-w-5xl
+      items-center
+      gap-1.5 sm:gap-2.5
     "
-  >
-    {/* Status */}
-    <span className="relative flex h-1.5 w-1.5 shrink-0">
-      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/50" />
-      <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400" />
-    </span>
+            >
+              {/* ───────────── AUDIO ───────────── */}
+              <div
+                className="
+        flex h-8 min-w-0 flex-1
+        items-center
+rounded-full
+   
+        sm:h-9 sm:px-3
+      "
+              >
+                <div className="mr-1.5 flex h-8 w-4 shrink-0 items-center justify-center rounded-xl bg-white/[0.06] sm:mr-2">
+                  <span className="text-[8px] text-white/60 sm:text-[9px]">
+                    ♪
+                  </span>
+                </div>        
 
-    <p className="whitespace-nowrap text-[9px] font-medium tracking-[0.06em] text-white/50 sm:text-[10px]">
-      <span className="font-semibold text-white/85">
-        Vishvaguru Search
-      </span>
+                <audio
+                  controls
+                  preload="metadata"
+                  className="
+           min-w-0 w-full h-full
+          opacity-65
+          rounded-xl
+          transition-opacity duration-300
+          hover:opacity-100
 
-      <span className="mx-1.5 text-white/20">•</span>
+        "
+                >
+                  <source src="/audia/vishavguru.mp3" type="audio/mpeg" />
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
 
-      <span className="text-emerald-400/90">
-        Made in India Project
-      </span>
+              {/* ───────────── PROJECT STATUS ───────────── */}
+              <div
+                className="
+        flex h-8 min-w-0 flex-1
+        items-center justify-center
+       rounded-xl
+        border border-white/[0.08]
+        bg-black/60
+        px-2
+        backdrop-blur-2xl
+        shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+        transition-all duration-300
+        hover:border-white/[0.16]
+        hover:bg-black/75
+        sm:h-9 sm:px-3
+      "
+              >
+                <span className="relative mr-1.5 flex h-1.5 w-1.5 shrink-0 sm:mr-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/40" />
+                  <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                </span>
 
-      <span className="mx-1.5 text-white/20">•</span>
+                <p className="min-w-0 truncate text-[8px] font-medium tracking-[0.03em] text-white/50 sm:text-[10px]">
+                  <span className="font-semibold text-white/85">
+                    Vishvaguru
+                  </span>
 
-      <span className="text-white/45">
-        Coming Soon
-      </span>
-    </p>
-  </div>
-</div>
+                  <span className="mx-1 text-white/20">•</span>
+
+                  <span className="text-emerald-400/90">Make in India</span>
+
+                  <span className="mx-1 text-white/20">•</span>
+
+                  <span className="text-white/40">Coming Soon</span>
+                </p>
+              </div>
+
+              {/* ───────────── VISITOR ───────────── */}
+              <div
+                className="
+        flex h-8 min-w-0 flex-1
+        items-center justify-center
+          rounded-full
+       
+        sm:h-9 sm:px-3
+      "
+              >
+                {/* <Visitor /> */}
+
+                <div className="flex min-w-0 w-full items-center gap-1.5">
+                  <Visitor />
+                </div>
+              </div>
+            </div>
+          </div>
         </main>
       ) : (
         /*

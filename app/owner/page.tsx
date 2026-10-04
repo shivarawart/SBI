@@ -1,221 +1,235 @@
 "use client";
 
-import { useEffect, useState, ChangeEvent, FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import {
-  getOwnerEmailFromStorage,
-  OWNER_EMAIL,
-  getMediaItems,
-  saveMediaItem,
-  deleteMediaItem,
-  MediaItem,
-} from "../lib/storage";
-import Navbar  from "../components/Navbar";
+import { FormEvent, useEffect, useState } from "react";
+
+type Owner = {
+  id: string;
+  name: string;
+  email: string;
+  created_at: string;
+};
 
 export default function OwnerPage() {
-  const router = useRouter();
-  const [isOwner, setIsOwner] = useState<boolean | null>(null);
-  const [items, setItems] = useState<MediaItem[]>([]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
-  const [file, setFile] = useState<File | null>(null);
-  const [title, setTitle] = useState("");
-  const [type, setType] = useState<"image" | "video">("image");
-  const [isUploading, setIsUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [owners, setOwners] = useState<Owner[]>([]);
+
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  async function fetchOwners() {
+    try {
+      setFetching(true);
+
+      const response = await fetch("/api/owners", {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch owners");
+      }
+
+      setOwners(data.owners || []);
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        error instanceof Error ? error.message : "Failed to fetch owners",
+      );
+    } finally {
+      setFetching(false);
+    }
+  }
 
   useEffect(() => {
-    const stored = getOwnerEmailFromStorage();
-    const ok = !!stored && stored.toLowerCase() === OWNER_EMAIL.toLowerCase();
-    setIsOwner(ok);
-    if (!ok) {
-      // Not owner, redirect to home or login
-      setTimeout(() => router.push("/login"), 500);
-      return;
-    }
-    setItems(getMediaItems());
-  }, [router]);
+    fetchOwners();
+  }, []);
 
-  if (isOwner === null) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        Loading...
-      </div>
-    );
-  }
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-  if (!isOwner) {
-    return null;
-  }
+    setMessage("");
+    setError("");
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) {
-      setFile(null);
-      return;
-    }
-    if (f.type.startsWith("image/")) {
-      setType("image");
-    } else if (f.type.startsWith("video/")) {
-      setType("video");
-    } else {
-      setError("Please select a valid image or video file.");
-      setFile(null);
-      return;
-    }
-    setFile(f);
-    setError(null);
-  };
-
-  const handleUpload = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!file) {
-      setError("Please select a file to upload.");
+    if (!name.trim() || !email.trim()) {
+      setError("Name and email are required");
       return;
     }
 
-    setIsUploading(true);
-    setError(null);
+    try {
+      setLoading(true);
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      saveMediaItem({
-        type,
-        dataUrl,
-        title: title.trim() || undefined,
+      const response = await fetch("/api/owners", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+        }),
       });
-      setItems(getMediaItems());
-      setFile(null);
-      setTitle("");
-      setIsUploading(false);
-    };
-    reader.onerror = () => {
-      setError("Failed to read file.");
-      setIsUploading(false);
-    };
-    reader.readAsDataURL(file);
-  };
 
-  const handleDelete = (id: string) => {
-    deleteMediaItem(id);
-    setItems(getMediaItems());
-  };
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create owner");
+      }
+
+      setMessage("Owner created successfully");
+
+      setName("");
+      setEmail("");
+
+      await fetchOwners();
+    } catch (error) {
+      console.error(error);
+
+      setError(error instanceof Error ? error.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="relative min-h-screen bg-black text-white">
-      <div
-        className="absolute inset-0 -z-10 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop')",
-        }}
-      />
-      <div className="absolute inset-0 -z-10 bg-black/60" />
+    <main className="min-h-screen bg-[#050505] px-10 py-26 text-white">
+      <div className="mx-auto max-w-5xl">
+        {/* Header */}
+        <div className="mb-10">
+          <p className="mb-3 text-sm font-medium uppercase tracking-[0.25em] text-white/40">
+            Owner Management
+          </p>
 
-      <Navbar />
-
-      <div className="mx-auto max-w-5xl px-6 py-8">
-        <h1 className="mb-2 text-3xl font-extrabold">
-          <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
             Owner Dashboard
-          </span>
-        </h1>
-        <p className="mb-6 text-sm text-gray-300">
-          Upload images and videos that will be visible on the Media page.
-        </p>
+          </h1>
 
-        {/* Upload Form */}
-        <form
-          onSubmit={handleUpload}
-          className="mb-10 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-md"
-        >
-          <div className="mb-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-gray-300">
-                Title (optional)
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Campus Tour Video"
-                className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-gray-300">
-                File (image or video)
-              </label>
-              <input
-                type="file"
-                accept="image/*,video/*"
-                onChange={handleFileChange}
-                className="w-full text-sm text-gray-300 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-white hover:file:bg-indigo-700"
-              />
-              {file && (
-                <p className="mt-1 text-xs text-gray-400">
-                  Selected: {file.name} ({type})
-                </p>
-              )}
-            </div>
+          <p className="mt-3 max-w-2xl text-white/50">
+            Create and manage owners who can publish videos to the platform.
+          </p>
+        </div>
+
+        {/* Create Owner */}
+        <section className="rounded-3xl border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/20 md:p-8">
+          <div className="mb-7">
+            <h2 className="text-xl font-semibold">Create Owner</h2>
+
+            <p className="mt-1 text-sm text-white/40">
+              Add an owner using their name and email address.
+            </p>
           </div>
 
-          {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
+          <form onSubmit={handleSubmit} className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm text-white/60">Name</label>
 
-          <button
-            type="submit"
-            disabled={isUploading || !file}
-            className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isUploading ? "Uploading..." : "Upload"}
-          </button>
-        </form>
+              <input
+                type="text"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Shivam"
+                className="h-12 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-sm outline-none transition placeholder:text-white/20 focus:border-white/30"
+              />
+            </div>
 
-        {/* Uploaded Items List */}
-        <h2 className="mb-4 text-xl font-semibold">Uploaded Content</h2>
-        {items.length === 0 ? (
-          <p className="text-sm text-gray-400">
-            No content uploaded yet. Use the form above to add images or videos.
-          </p>
-        ) : (
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((item) => (
-              <li
-                key={item.id}
-                className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md"
+            <div>
+              <label className="mb-2 block text-sm text-white/60">Email</label>
+
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="owner@example.com"
+                className="h-12 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-sm outline-none transition placeholder:text-white/20 focus:border-white/30"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="h-12 rounded-xl bg-white px-6 text-sm font-semibold text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {item.type === "image" ? (
-                  <img
-                    src={item.dataUrl}
-                    alt={item.title || "Uploaded image"}
-                    className="h-48 w-full object-cover"
-                  />
-                ) : (
-                  <video
-                    src={item.dataUrl}
-                    controls
-                    className="h-48 w-full object-cover"
-                  />
-                )}
-                <div className="p-3">
-                  <div className="text-sm font-medium">
-                    {item.title || (item.type === "image" ? "Image" : "Video")}
+                {loading ? "Creating..." : "Create Owner"}
+              </button>
+            </div>
+          </form>
+
+          {/* Status */}
+          {message && (
+            <div className="mt-5 rounded-xl border border-emerald-400/20 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-300">
+              {message}
+            </div>
+          )}
+
+          {error && (
+            <div className="mt-5 rounded-xl border border-red-400/20 bg-red-400/5 px-4 py-3 text-sm text-red-300">
+              {error}
+            </div>
+          )}
+        </section>
+
+        {/* Owners */}
+        <section className="mt-8">
+          <div className="mb-5 flex items-end justify-between">
+            <div>
+              <h2 className="text-xl font-semibold">Registered Owners</h2>
+
+              <p className="mt-1 text-sm text-white/40">
+                Owners currently stored in Neon.
+              </p>
+            </div>
+
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/50">
+              {owners.length} owners
+            </span>
+          </div>
+
+          <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.025]">
+            {fetching ? (
+              <div className="p-8 text-center text-sm text-white/40">
+                Loading owners...
+              </div>
+            ) : owners.length === 0 ? (
+              <div className="p-10 text-center">
+                <p className="text-white/60">No owners yet.</p>
+
+                <p className="mt-1 text-sm text-white/30">
+                  Create your first owner above.
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-white/[0.07]">
+                {owners.map((owner) => (
+                  <div
+                    key={owner.id}
+                    className="flex flex-col gap-3 p-5 transition hover:bg-white/[0.025] md:flex-row md:items-center md:justify-between"
+                  >
+                    <div>
+                      <p className="font-medium">{owner.name}</p>
+
+                      <p className="mt-1 text-sm text-white/40">
+                        {owner.email}
+                      </p>
+                    </div>
+
+                    <div className="text-xs text-white/25">
+                      {new Date(owner.created_at).toLocaleDateString()}
+                    </div>
                   </div>
-                  <div className="mt-1 flex items-center justify-between text-xs text-gray-400">
-                    <span>{new Date(item.createdAt).toLocaleString()}</span>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="rounded bg-red-600/80 px-2 py-0.5 text-white hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

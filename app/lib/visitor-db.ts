@@ -15,3 +15,4 @@ export async function initializeVisitorDatabase() {
     ON CONFLICT (id) DO NOTHING
   `;
 }
+

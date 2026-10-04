@@ -1,802 +1,283 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useUser, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-
-type NavbarProps = {
-  isOwnerLoggedIn?: boolean;
-  onOwnerLogout?: () => void;
-};
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
 const navItems = [
   { label: "Search", href: "/" },
-  { label: "Videos", href: "/media" },
-  { label: "Contact", href: "/contect" },
-  { label: "info", href:"/info"}
+  { label: "Videos", href: "/videos" },
+  { label: "Carrers", href: "/contect" },
+  { label: "Owner", href: "/ownerLogin" },
+  { label: "Feedback", href: "/feedback" },
 ];
 
-export default function Navbar({
-  isOwnerLoggedIn = false,
-  onOwnerLogout,
-}: NavbarProps) {
-  const pathname = usePathname();
-
+export default function Navbar() {
   const { isLoaded, isSignedIn } = useUser();
 
-  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const closeMenu = () => setOpen(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Close mobile menu whenever route changes
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  const handleNavigation = (href: string) => {
+    setMobileOpen(false);
+
+    /*
+     * Videos requires Clerk authentication.
+     */
+    if (href === "/videos" && isLoaded && !isSignedIn) {
+      return;
+    }
+
+    router.push(href);
+  };
 
   return (
-    <header
-      className="
-        fixed inset-x-0 top-0 z-50 h-20
-        border-b border-white/[0.08]
-        bg-[#0b0805]/70
-        text-white
-        backdrop-blur-2xl
-        supports-[backdrop-filter]:bg-[#0b0805]/55
-      "
-      style={
-        {
-          "--navbar-height": "80px",
-        } as React.CSSProperties
-      }
-    >
-      {/* Top ambient line */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute inset-x-0 top-0 h-px
-          bg-gradient-to-r
-          from-transparent
-          via-amber-400/70
-          to-transparent
-        "
-      />
+    <>
+      {/* =====================================================
+          NAVBAR
+      ===================================================== */}
 
-      {/* Ambient glow */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute
-          -top-24 left-2
-          h-30 w-70
-          -translate-x-1/2
-          rounded-full
-          bg-amber-800/[0.07]
-          blur-3xl
-        "
-      />
+      <header className="fixed inset-x-0 top-0 z-50">
+        <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+          <nav className="relative flex h-[68px] items-center justify-between rounded-2xl border border-white/[0.08] bg-[#070707]/80 px-3 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:px-4">
+            {/* =================================================
+                LEFT — LOGO
+            ================================================= */}
 
-      <nav
-        className="
-          relative mx-auto flex h-full max-w-7xl
-          items-center justify-between
-          px-2 sm:px-6 lg:px-8
-        "
-      >
-        {/* =========================================================
-            LOGO
-        ========================================================= */}
-      
-        <Link
-          href="/"
-          onClick={closeMenu}
-          aria-label="Vishvaguru home — coming soon"
-          className="
-    group relative
-    flex min-w-0
-    items-center gap-2.5
-    outline-none
-  "
-        >
-          {/* ───────────────── LOGO MARK ───────────────── */}
-          <span
-            aria-hidden="true"
-            className="
-      relative flex
-      h-9 w-9 shrink-0
-      items-center justify-center
-      overflow-hidden
-      rounded-[11px]
-      border border-amber-300/20
-      bg-gradient-to-br
-      from-amber-300
-      via-orange-500
-      to-red-700
-      shadow-[0_0_22px_rgba(245,158,11,0.12)]
-      transition-all duration-500 ease-out
-      group-hover:scale-105
-      group-hover:-rotate-2
-      group-hover:border-amber-300/45
-      group-hover:shadow-[0_0_30px_rgba(245,158,11,0.25)]
-      group-active:scale-95
-    "
-          >
-            {/* Glow */}
-            <span
-              className="
-        pointer-events-none
-        absolute -inset-3
-        rounded-full
-        bg-orange-400/20
-        opacity-0
-        blur-xl
-        transition-opacity duration-500
-        group-hover:opacity-100
-      "
-            />
-
-            {/* Shine */}
-            <span
-              className="
-        pointer-events-none
-        absolute inset-y-0 -left-[120%]
-        z-10 w-[55%]
-        skew-x-[-20deg]
-        bg-gradient-to-r
-        from-transparent
-        via-white/45
-        to-transparent
-        transition-all duration-700
-        group-hover:left-[150%]
-      "
-            />
-
-            {/* Inner frame */}
-            <span
-              className="
-        pointer-events-none
-        absolute inset-[4px]
-        rounded-[7px]
-        border border-white/20
-      "
-            />
-
-            {/* V */}
-            <span
-              className="
-        relative z-20
-        select-none
-        text-[14px]
-        font-black
-        leading-none
-        tracking-[-0.12em]
-        text-white
-        drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]
-        transition-transform duration-500
-        group-hover:scale-110
-      "
-            >
-              V
-            </span>
-          </span>
-
-          {/* ───────────────── WORDMARK ───────────────── */}
-          <span className="flex min-w-0 flex-col justify-center">
-            <span className="flex items-center gap-2">
-              <span
-                className="
-          truncate
-          text-[15px]
-          font-black
-          leading-none
-          tracking-[-0.045em]
-          text-white
-          transition-all duration-300
-          group-hover:text-amber-100
-        "
-              >
-                Vishvaguru
-              </span>
-
-             
-            </span>
-
-            {/* Tagline */}
-            <span
-              className="
-        mt-1
-        text-[7px]
-        font-medium
-        leading-none
-        tracking-[0.08em]
-        text-white/30
-        transition-colors duration-300
-        group-hover:text-white/45
-      "
-            >
-              India’s search engine
-            </span>
-          </span>
-        </Link>
-       
-        {/* =========================================================
-            DESKTOP NAVIGATION
-        ========================================================= */}
-        <div className="hidden items-center gap-4 md:flex">
-          {/* Navigation */}
-          <div
-            className="
-              flex items-center
-              rounded-full
-              border border-white/[0.08]
-              bg-white/[0.035]
-              p-1
-              shadow-[0_10px_40px_rgba(0,0,0,0.18)]
-            "
-          >
-            {navItems.map((item) => {
-              const active =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`
-                    group relative
-                    rounded-full
-                    px-4 py-2
-                    text-[13px]
-                    font-medium
-                    transition-all duration-300
-                    focus:outline-none
-                    focus:ring-2
-                    focus:ring-amber-400/40
-                    ${
-                      active
-                        ? "bg-white/[0.08] text-white"
-                        : "text-white/60 hover:bg-white/[0.07] hover:text-white"
-                    }
-                  `}
-                >
-                  <span className="relative z-10">{item.label}</span>
-
-                  {/* Active / hover underline */}
-                  <span
-                    className={`
-                      absolute bottom-1 left-1/2
-                      h-px
-                      -translate-x-1/2
-                      bg-gradient-to-r
-                      from-transparent
-                      via-amber-300
-                      to-transparent
-                      transition-all duration-300
-                      ${active ? "w-1/2" : "w-0 group-hover:w-1/2"}
-                    `}
-                  />
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* =====================================================
-              OWNER
-          ===================================================== */}
-
-          {!isOwnerLoggedIn ? (
             <Link
-              href="/owner"
-              className="
-                group relative
-                rounded-full
-                border border-amber-400/15
-                bg-amber-400/[0.06]
-                px-4 py-2
-                text-[13px]
-                font-medium
-                text-amber-100/80
-                transition-all duration-300
-                hover:border-amber-300/30
-                hover:bg-amber-400/[0.12]
-                hover:text-amber-100
-                focus:outline-none
-                focus:ring-2
-                focus:ring-amber-400/40
-              "
+              href="/"
+              onClick={() => setMobileOpen(false)}
+              className="group flex items-center gap-3"
             >
-              <span className="relative z-10">Owner Login</span>
+              <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.06]">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.12] via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
 
-              <span
-                aria-hidden="true"
-                className="
-                  absolute inset-0 -z-0
-                  rounded-full
-                  bg-amber-400/10
-                  opacity-0
-                  blur-md
-                  transition-opacity duration-300
-                  group-hover:opacity-100
-                "
-              />
+                <span className="relative text-sm font-bold tracking-tight text-white">
+                  V
+                </span>
+              </div>
+
+              <div className="hidden sm:block">
+                <p className="text-sm font-semibold tracking-tight text-white">
+                  Vishvaguru
+                </p>
+
+                <p className="text-[9px] uppercase tracking-[0.2em] text-white/25">
+                  Search the world
+                </p>
+              </div>
             </Link>
-          ) : (
-            <>
-              <Link
-                href="/owner"
-                className="
-                  group relative
-                  rounded-full
-                  px-4 py-2
-                  text-[13px]
-                  font-medium
-                  text-amber-300
-                  transition-all duration-300
-                  hover:bg-amber-400/10
-                  hover:text-amber-200
-                "
-              >
-                Dashboard
-                <span
-                  aria-hidden="true"
-                  className="
-                    absolute bottom-1 left-1/2
-                    h-px w-0
-                    -translate-x-1/2
-                    bg-amber-300
-                    transition-all duration-300
-                    group-hover:w-1/2
-                  "
-                />
-              </Link>
 
-              <button
-                type="button"
-                onClick={onOwnerLogout}
-                className="
-                  rounded-full
-                  px-4 py-2
-                  text-[13px]
-                  font-medium
-                  text-red-300/70
-                  transition-all duration-300
-                  hover:bg-red-400/10
-                  hover:text-red-200
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-red-400/30
-                "
-              >
-                Logout
-              </button>
-            </>
-          )}
+            {/* =================================================
+                CENTER — DESKTOP NAV
+            ================================================= */}
 
-          {/* =====================================================
-              CLERK AUTHENTICATION
+            <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-xl border border-white/[0.06] bg-white/[0.025] p-1 md:flex">
+              {navItems.map((item) => {
+                const active = pathname === item.href;
 
-              IMPORTANT:
-              SignIn/SignUp are rendered ONLY after Clerk confirms
-              that the user is signed out.
-          ===================================================== */}
+                const requiresAuth = item.href === "/videos";
 
-          {!isLoaded ? (
-            /* Clerk loading state */
-            <div
-              className="
-                h-9 w-20
-                animate-pulse
-                rounded-full
-                bg-white/[0.06]
-              "
-              aria-hidden="true"
-            />
-          ) : isSignedIn ? (
-            /* Signed in */
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox:
-                    "w-9 h-9 rounded-full border-2 border-amber-400/30",
+                return (
+                  <div key={item.href} className="relative">
+                    {requiresAuth && isLoaded && !isSignedIn ? (
+                      <SignInButton mode="modal" fallbackRedirectUrl="/videos">
+                        <button
+                          type="button"
+                          className={`relative rounded-lg px-4 py-2 text-xs font-medium transition-all ${
+                            active
+                              ? "bg-white text-black shadow-lg shadow-white/10"
+                              : "text-white/45 hover:bg-white/[0.06] hover:text-white"
+                          }`}
+                        >
+                          {item.label}
 
-                  userButtonPopoverCard:
-                    "bg-[#0b0805] border border-white/[0.08]",
+                          <span className="ml-1.5 text-[8px] opacity-40">
+                            •
+                          </span>
+                        </button>
+                      </SignInButton>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className={`relative block rounded-lg px-4 py-2 text-xs font-medium transition-all ${
+                          active
+                            ? "bg-white text-black shadow-lg shadow-white/10"
+                            : "text-white/45 hover:bg-white/[0.06] hover:text-white"
+                        }`}
+                      >
+                        {item.label}
 
-                  userButtonPopoverActionButton:
-                    "text-white/70 hover:text-white hover:bg-white/[0.05]",
-
-                  userButtonPopoverActionButtonText: "text-sm",
-                },
-              }}
-            />
-          ) : (
-            /* Signed out */
-            <div className="flex items-center gap-2">
-              <SignInButton mode="modal">
-                <button
-                  type="button"
-                  className="
-                    rounded-full
-                    px-4 py-2
-                    text-[13px]
-                    font-medium
-                    text-white/70
-                    transition-all duration-300
-                    hover:bg-white/[0.07]
-                    hover:text-white
-                    focus:outline-none
-                    focus:ring-2
-                    focus:ring-amber-400/40
-                  "
-                >
-                  Sign In
-                </button>
-              </SignInButton>
-
-              <SignUpButton mode="modal">
-                <button
-                  type="button"
-                  className="
-                    rounded-full
-                    border border-amber-400/30
-                    bg-amber-500/[0.1]
-                    px-4 py-2
-                    text-[13px]
-                    font-medium
-                    text-amber-200
-                    transition-all duration-300
-                    hover:border-amber-300/50
-                    hover:bg-amber-500/[0.18]
-                    hover:text-amber-100
-                    focus:outline-none
-                    focus:ring-2
-                    focus:ring-amber-400/40
-                  "
-                >
-                  Sign Up
-                </button>
-              </SignUpButton>
+                        {active && (
+                          <span className="absolute inset-x-3 -bottom-[1px] h-px bg-black/20" />
+                        )}
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          )}
-        </div>
-        {/* =========================================================
-            MOBILE MENU BUTTON
-        ========================================================= */}
-        <button
-          type="button"
-          aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
-          className="
-            group relative
-            flex h-11 w-11
-            items-center justify-center
-            rounded-full
-            border border-white/10
-            bg-white/[0.04]
-            transition-all duration-300
-            hover:border-amber-300/30
-            hover:bg-amber-400/[0.08]
-            focus:outline-none
-            focus:ring-2
-            focus:ring-amber-400/40
-            md:hidden
-          "
-        >
-          <span className="relative flex h-5 w-5 flex-col items-center justify-center">
-            <span
-              className={`absolute h-[1.5px] w-5 bg-white transition-all duration-300 ${
-                open ? "rotate-45" : "-translate-y-1.5"
-              }`}
-            />
 
-            <span
-              className={`absolute h-[1.5px] w-5 bg-white transition-all duration-300 ${
-                open ? "opacity-0" : "opacity-100"
-              }`}
-            />
+            {/* =================================================
+                RIGHT — AUTH
+            ================================================= */}
 
-            <span
-              className={`absolute h-[1.5px] w-5 bg-white transition-all duration-300 ${
-                open ? "-rotate-45" : "translate-y-1.5"
-              }`}
-            />
-          </span>
-        </button>
-      </nav>
+            <div className="flex items-center gap-2">
+              {!isLoaded ? (
+                <div className="h-9 w-24 animate-pulse rounded-xl bg-white/[0.06]" />
+              ) : isSignedIn ? (
+                <div className="flex items-center gap-3">
+                  <div className="hidden text-right sm:block">
+                    <p className="text-[10px] font-medium text-white/60">
+                      Account
+                    </p>
 
-      {/* =========================================================
-          MOBILE MENU
-      ========================================================= */}
+                    <p className="text-[9px] text-white/25">Signed in</p>
+                  </div>
 
-      <div
-        className={`
-          absolute left-0 right-0 top-20
-          overflow-hidden
-          border-b border-white/[0.08]
-          bg-[#0b0805]/95
-          backdrop-blur-2xl
-          transition-all duration-500
-          ease-[cubic-bezier(0.22,1,0.36,1)]
-          md:hidden
-          ${
-            open
-              ? "pointer-events-auto max-h-[700px] opacity-100"
-              : "pointer-events-none max-h-0 opacity-0"
-          }
-        `}
-      >
-        {/* Mobile glow */}
-        <div
-          aria-hidden="true"
-          className="
-            pointer-events-none
-            absolute -top-20 left-1/2
-            h-40 w-72
-            -translate-x-1/2
-            rounded-full
-            bg-amber-500/[0.08]
-            blur-3xl
-          "
-        />
-
-        <div className="relative mx-auto max-w-7xl px-4 py-4 sm:px-6">
-          <div
-            className="
-              overflow-hidden
-              rounded-2xl
-              border border-white/[0.08]
-              bg-white/[0.025]
-            "
-          >
-            {/* Navigation links */}
-            {navItems.map((item, index) => {
-              const active =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={closeMenu}
-                  className={`
-                    group
-                    flex items-center justify-between
-                    px-5 py-4
-                    text-sm
-                    font-medium
-                    transition-all duration-300
-                    ${
-                      active
-                        ? "bg-white/[0.06] text-white"
-                        : "text-white/70 hover:bg-white/[0.05] hover:text-white"
-                    }
-                    ${
-                      index !== navItems.length - 1
-                        ? "border-b border-white/[0.07]"
-                        : ""
-                    }
-                  `}
-                >
-                  <span>{item.label}</span>
-
-                  <span
-                    className="
-                      translate-x-0
-                      text-amber-300/0
-                      transition-all duration-300
-                      group-hover:translate-x-1
-                      group-hover:text-amber-300
-                    "
-                  >
-                    →
-                  </span>
-                </Link>
-              );
-            })}
-
-            {/* =====================================================
-                MOBILE CLERK AUTH
-            ===================================================== */}
-
-            {!isLoaded ? (
-              <div className="border-t border-white/[0.07] px-5 py-4">
-                <div className="h-11 w-full animate-pulse rounded-xl bg-white/[0.06]" />
-              </div>
-            ) : isSignedIn ? (
-              <div className="border-t border-white/[0.07] px-5 py-4">
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox:
-                        "w-10 h-10 rounded-full border-2 border-amber-400/30",
-
-                      userButtonPopoverCard:
-                        "bg-[#0b0805] border border-white/[0.08]",
-
-                      userButtonPopoverActionButton:
-                        "text-white/70 hover:text-white hover:bg-white/[0.05]",
-
-                      userButtonPopoverActionButtonText: "text-sm",
-                    },
-                  }}
-                />
-              </div>
-            ) : (
-              <>
-                <div className="border-t border-white/[0.07] px-5 py-4">
-                  <SignInButton mode="modal">
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: "h-9 w-9 ring-1 ring-white/10",
+                      },
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="hidden items-center gap-1.5 sm:flex">
+                  <SignInButton mode="modal" fallbackRedirectUrl="/">
                     <button
                       type="button"
-                      onClick={closeMenu}
-                      className="
-                        w-full
-                        rounded-xl
-                        border border-white/[0.08]
-                        bg-white/[0.03]
-                        px-4 py-3
-                        text-sm
-                        font-medium
-                        text-white/80
-                        transition-all duration-300
-                        hover:bg-white/[0.06]
-                        hover:text-white
-                      "
+                      className="rounded-xl px-4 py-2.5 text-xs font-medium text-white/50 transition hover:bg-white/[0.05] hover:text-white"
                     >
-                      Sign In
+                      Sign in
                     </button>
                   </SignInButton>
-                </div>
 
-                <div className="px-5 pb-4">
-                  <SignUpButton mode="modal">
+                  <SignUpButton mode="modal" fallbackRedirectUrl="/">
                     <button
                       type="button"
-                      onClick={closeMenu}
-                      className="
-                        w-full
-                        rounded-xl
-                        border border-amber-400/20
-                        bg-amber-500/[0.08]
-                        px-4 py-3
-                        text-sm
-                        font-medium
-                        text-amber-200
-                        transition-all duration-300
-                        hover:border-amber-300/30
-                        hover:bg-amber-500/[0.12]
-                        hover:text-amber-100
-                      "
+                      className="rounded-xl bg-white px-4 py-2.5 text-xs font-semibold text-black transition hover:bg-white/90"
                     >
-                      Sign Up
+                      Sign up
                     </button>
                   </SignUpButton>
                 </div>
-              </>
-            )}
+              )}
 
-            {/* =====================================================
-                OWNER
-            ===================================================== */}
+              {/* =================================================
+                  MOBILE MENU
+              ================================================= */}
 
-            {!isOwnerLoggedIn ? (
-              <Link
-                href="/owner"
-                onClick={closeMenu}
-                className="
-                  group
-                  flex items-center justify-between
-                  border-t border-white/[0.07]
-                  bg-amber-400/[0.04]
-                  px-5 py-4
-                  text-sm
-                  font-medium
-                  text-amber-100/80
-                  transition-all duration-300
-                  hover:bg-amber-400/[0.09]
-                  hover:text-amber-100
-                "
+              <button
+                type="button"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/60 transition hover:bg-white/[0.08] hover:text-white md:hidden"
+                aria-label="Toggle menu"
               >
-                <span>Owner Login</span>
+                <div className="space-y-1.5">
+                  <span
+                    className={`block h-px w-4 bg-current transition ${
+                      mobileOpen ? "translate-y-[3px] rotate-45" : ""
+                    }`}
+                  />
 
-                <span
-                  className="
-                    translate-x-0
-                    text-amber-300
-                    transition-transform duration-300
-                    group-hover:translate-x-1
-                  "
-                >
-                  →
-                </span>
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href="/owner"
-                  onClick={closeMenu}
-                  className="
-                    group
-                    flex items-center justify-between
-                    border-t border-white/[0.07]
-                    bg-amber-400/[0.04]
-                    px-5 py-4
-                    text-sm
-                    font-medium
-                    text-amber-200
-                    transition-all duration-300
-                    hover:bg-amber-400/[0.09]
-                  "
-                >
-                  <span>Dashboard</span>
+                  <span
+                    className={`block h-px w-4 bg-current transition ${
+                      mobileOpen ? "-translate-y-[3px] -rotate-45" : ""
+                    }`}
+                  />
+                </div>
+              </button>
+            </div>
+          </nav>
 
-                  <span className="transition-transform duration-300 group-hover:translate-x-1">
-                    →
-                  </span>
-                </Link>
+          {/* ===================================================
+              MOBILE MENU
+          =================================================== */}
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOwnerLogout?.();
-                    closeMenu();
-                  }}
-                  className="
-                    flex w-full
-                    items-center justify-between
-                    border-t border-white/[0.07]
-                    px-5 py-4
-                    text-left
-                    text-sm
-                    font-medium
-                    text-red-300/80
-                    transition-all duration-300
-                    hover:bg-red-400/[0.07]
-                    hover:text-red-200
-                  "
-                >
-                  <span>Logout</span>
-                  <span>↗</span>
-                </button>
-              </>
-            )}
-          </div>
+          {mobileOpen && (
+            <div className="mt-2 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#080808]/95 p-2 shadow-2xl backdrop-blur-2xl md:hidden">
+              <div className="space-y-1">
+                {navItems.map((item) => {
+                  const active = pathname === item.href;
 
-          {/* Mobile footer */}
-          <div className="flex items-center justify-between px-2 py-4">
-            <span className="text-[11px] tracking-[0.18em] text-white/30">
-              VISHVAGURU
-            </span>
+                  const requiresAuth = item.href === "/videos";
 
-            <span className="text-[11px] text-amber-300/50">
-              Search • Discover • Explore
-            </span>
-          </div>
+                  if (requiresAuth && isLoaded && !isSignedIn) {
+                    return (
+                      <SignInButton
+                        key={item.href}
+                        mode="modal"
+                        fallbackRedirectUrl="/videos"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setMobileOpen(false)}
+                          className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm text-white/55 transition hover:bg-white/[0.05] hover:text-white"
+                        >
+                          <span>{item.label}</span>
+
+                          <span className="text-[9px] text-white/20">
+                            Sign in required
+                          </span>
+                        </button>
+                      </SignInButton>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm transition ${
+                        active
+                          ? "bg-white text-black"
+                          : "text-white/55 hover:bg-white/[0.05] hover:text-white"
+                      }`}
+                    >
+                      <span>{item.label}</span>
+
+                      {active && <span className="text-[10px]">●</span>}
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Mobile auth */}
+
+              {!isLoaded ? null : !isSignedIn ? (
+                <div className="mt-2 grid grid-cols-2 gap-2 border-t border-white/[0.06] pt-2">
+                  <SignInButton mode="modal" fallbackRedirectUrl="/">
+                    <button
+                      type="button"
+                      onClick={() => setMobileOpen(false)}
+                      className="rounded-xl border border-white/10 py-3 text-xs font-medium text-white/60"
+                    >
+                      Sign in
+                    </button>
+                  </SignInButton>
+
+                  <SignUpButton mode="modal" fallbackRedirectUrl="/">
+                    <button
+                      type="button"
+                      onClick={() => setMobileOpen(false)}
+                      className="rounded-xl bg-white py-3 text-xs font-semibold text-black"
+                    >
+                      Sign up
+                    </button>
+                  </SignUpButton>
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
-      </div>
-
-      {/* Mobile backdrop */}
-      <button
-        type="button"
-        aria-label="Close navigation menu"
-        onClick={closeMenu}
-        className={`
-          fixed inset-0 top-20 -z-10
-          bg-black/40
-          backdrop-blur-[2px]
-          transition-opacity duration-300
-          md:hidden
-          ${
-            open
-              ? "pointer-events-auto opacity-100"
-              : "pointer-events-none opacity-0"
-          }
-        `}
-      />
-    </header>
+      </header>
+    </>
   );
 }
+ 

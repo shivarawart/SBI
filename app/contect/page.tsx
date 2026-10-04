@@ -3,7 +3,15 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import emailjs from "@emailjs/browser";
-import { ArrowRight, Check, Mail, MessageCircle, Users } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Mail,
+  MessageCircle,
+  Users,
+
+  Phone,
+} from "lucide-react";
 
 type ContactForm = {
   name: string;
@@ -197,7 +205,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
             <span className="h-px w-8 bg-amber-400" />
 
             <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-amber-300/80">
-              Vishvaguru / Contact
+              Vishvaguru / Carrers
             </span>
           </div>
 
@@ -225,7 +233,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
             <h1 className="max-w-5xl text-[clamp(3.2rem,7.5vw,8rem)] font-medium leading-[0.86] tracking-[-0.07em]">
               Let&apos;s
               <br />
-              <span className="text-white/25">build</span>{" "}
+              <span className="text-white/25">work</span>{" "}
               <span className="text-amber-400">together.</span>
             </h1>
           </div>
@@ -252,91 +260,174 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
               LEFT INFORMATION
           ===================================================== */}
 
-          <section className="border-b border-white/10 py-8 lg:border-b-0 lg:border-r lg:pr-10">
+          <section className="border-b border-white/10 py-10 lg:border-b-0 lg:border-r lg:pr-12">
+            {/* Header */}
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-[0.25em] text-white/30">
-                Why connect
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.7)]" />
 
-              <span className="text-[10px] text-amber-300/60">01 / 03</span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-white/35">
+                  Why connect
+                </span>
+              </div>
+
+              <span className="font-mono text-[10px] tracking-wider text-amber-300/60">
+                01 / 03
+              </span>
             </div>
 
-            <div className="mt-10">
+            {/* Content */}
+            <div className="mt-8">
               {/* Idea */}
+              <div className="group relative flex gap-5 border-b border-white/[0.07] py-7">
+                <span className="pt-1 font-mono text-[9px] text-white/20">
+                  01
+                </span>
 
-              <div className="flex items-start gap-5 border-b border-white/10 py-6">
-                <MessageCircle
-                  size={19}
-                  strokeWidth={1.5}
-                  className="mt-1 shrink-0 text-amber-300"
-                />
+                <div className="flex min-w-0 flex-1 gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.025] transition-all duration-300 group-hover:border-amber-300/20 group-hover:bg-amber-300/[0.06]">
+                    <MessageCircle
+                      size={18}
+                      strokeWidth={1.5}
+                      className="text-amber-300 transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </div>
 
-                <div>
-                  <h2 className="text-sm font-medium text-white">
-                    Share an idea
-                  </h2>
+                  <div className="max-w-sm">
+                    <h2 className="text-sm font-medium tracking-[-0.01em] text-white">
+                      Share an idea
+                    </h2>
 
-                  <p className="mt-2 max-w-sm text-xs leading-6 text-white/35">
-                    Your feedback and ideas help shape what Vishvaguru becomes.
-                  </p>
+                    <p className="mt-2 text-xs leading-6 text-white/35">
+                      Have an idea, suggestion, or feature in mind? Tell us what
+                      Vishvaguru should become next.
+                    </p>
+                  </div>
                 </div>
+
+                <div className="absolute bottom-0 left-0 h-px w-0 bg-amber-300/50 transition-all duration-500 group-hover:w-16" />
               </div>
 
               {/* Community */}
+              <div className="group relative flex gap-5 border-b border-white/[0.07] py-7">
+                <span className="pt-1 font-mono text-[9px] text-white/20">
+                  02
+                </span>
 
-              <div className="flex items-start gap-5 border-b border-white/10 py-6">
-                <Users
-                  size={19}
-                  strokeWidth={1.5}
-                  className="mt-1 shrink-0 text-amber-300"
-                />
+                <div className="flex min-w-0 flex-1 gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.025] transition-all duration-300 group-hover:border-amber-300/20 group-hover:bg-amber-300/[0.06]">
+                    <Users
+                      size={18}
+                      strokeWidth={1.5}
+                      className="text-amber-300 transition-transform duration-300 group-hover:scale-110"
+                    />
+                  </div>
 
-                <div>
-                  <h2 className="text-sm font-medium text-white">
-                    Join the journey
-                  </h2>
+                  <div className="max-w-sm">
+                    <h2 className="text-sm font-medium tracking-[-0.01em] text-white">
+                      Join the journey
+                    </h2>
 
-                  <p className="mt-2 max-w-sm text-xs leading-6 text-white/35">
-                    Connect with a growing community built around discovery and
-                    knowledge.
-                  </p>
+                    <p className="mt-2 text-xs leading-6 text-white/35">
+                      Be part of a growing community focused on discovery,
+                      knowledge, and building something meaningful.
+                    </p>
+                  </div>
                 </div>
+
+                <div className="absolute bottom-0 left-0 h-px w-0 bg-amber-300/50 transition-all duration-500 group-hover:w-16" />
               </div>
 
-              {/* Email */}
+              {/* Contact */}
+              <div className="group relative mt-7 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.025]">
+                {/* Ambient glow */}
+                <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-amber-300/[0.06] blur-3xl" />
 
-              <a
-                href="mailto:owner@vishavguru.com"
-                className="group flex items-start gap-5 py-6"
-              >
-                <Mail
-                  size={19}
-                  strokeWidth={1.5}
-                  className="mt-1 shrink-0 text-amber-300"
-                />
+                <div className="relative p-5 sm:p-6">
+                  {/* Contact heading */}
+                  <div className="mb-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/30">
+                        Direct contact
+                      </p>
 
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/25">
-                    Direct contact
-                  </p>
+                      <p className="mt-1 text-xs text-white/25">
+                        Reach us directly
+                      </p>
+                    </div>
 
-                  <p className="mt-2 text-sm font-medium text-white/75 transition group-hover:text-amber-300">
-                    rajinderkumardhiman672@gmail.com
-                  </p>
+                    <div className="flex items-center gap-2 rounded-full border border-emerald-400/10 bg-emerald-400/[0.04] px-2.5 py-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]" />
+
+                      <span className="text-[9px] uppercase tracking-[0.12em] text-emerald-300/60">
+                        Available
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className="flex items-center gap-4 border-b border-white/[0.06] py-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-300/10 bg-amber-300/[0.04]">
+                      <Mail
+                        size={17}
+                        strokeWidth={1.5}
+                        className="text-amber-300"
+                      />
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-[9px] uppercase tracking-[0.18em] text-white/25">
+                        Email
+                      </p>
+
+                      <p className="mt-1 break-all text-sm font-medium text-white/75">
+                        rajinderkumardhiman672@gmail.com
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Phone */}
+                  <div className="flex items-center gap-4 pt-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-300/10 bg-amber-300/[0.04]">
+                      <Phone
+                        size={17}
+                        strokeWidth={1.5}
+                        className="text-amber-300"
+                      />
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-[9px] uppercase tracking-[0.18em] text-white/25">
+                        Phone
+                      </p>
+
+                      <p className="mt-1 text-sm font-medium text-white/75">
+                        +91 70155 23381
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </a>
+              </div>
             </div>
 
-            <Link
-              href="/"
-              className="group mt-8 inline-flex items-center gap-3 border-b border-white/15 pb-2 text-xs uppercase tracking-[0.15em] text-white/50 transition hover:border-amber-400 hover:text-amber-300"
-            >
-              Explore Vishvaguru
-              <ArrowRight
-                size={14}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              />
-            </Link>
+            {/* Bottom CTA */}
+            <div className="mt-8 flex items-center justify-between">
+              <p className="max-w-[220px] text-[11px] leading-5 text-white/25">
+                Building a better way to discover knowledge, together.
+              </p>
+
+              <Link
+                href="/"
+                className="group inline-flex shrink-0 items-center gap-2 text-[10px] font-medium uppercase tracking-[0.16em] text-white/45 transition-colors duration-300 hover:text-amber-300"
+              >
+                Explore
+                <ArrowRight
+                  size={13}
+                  strokeWidth={1.5}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </Link>
+            </div>
           </section>
 
           {/* =====================================================
