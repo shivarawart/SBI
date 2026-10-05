@@ -52,20 +52,24 @@ export default function Navbar() {
               onClick={() => setMobileOpen(false)}
               className="group flex items-center gap-3"
             >
-              <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.06]">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.12] via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
+              {/* Logo */}
+              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.06] shadow-[0_0_30px_rgba(255,255,255,0.04)] transition-all duration-300 group-hover:border-white/20 group-hover:bg-white/[0.09]">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.14] via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                <span className="relative text-sm font-bold tracking-tight text-white">
-                  V
-                </span>
+                <img
+                  src="/vishavguru.png"
+                  alt="Vishvaguru"
+                  className="relative h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-105"
+                />
               </div>
 
-              <div className="hidden sm:block">
-                <p className="text-sm font-semibold tracking-tight text-white">
+              {/* Brand */}
+              <div className="hidden sm:block leading-none">
+                <p className="text-sm font-semibold tracking-[-0.02em] text-white transition-colors duration-300 group-hover:text-white/90">
                   Vishvaguru
                 </p>
 
-                <p className="text-[9px] uppercase tracking-[0.2em] text-white/25">
+                <p className="mt-1 text-[9px] font-medium uppercase tracking-[0.2em] text-white/30 transition-colors duration-300 group-hover:text-white/45">
                   Search the world
                 </p>
               </div>

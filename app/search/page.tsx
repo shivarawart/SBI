@@ -266,7 +266,7 @@ function VishvaguruLogo({ large = false }: { large?: boolean }) {
               motion-safe:animate-pulse
             "
           />
-          make in india
+         Under make in india
         </span>
       )}
     </div>
@@ -837,11 +837,11 @@ rounded-full
 
                   <span className="mx-1 text-white/20">•</span>
 
-                  <span className="text-emerald-400/90">Make in India</span>
+                  <span className="text-emerald-400/90">Under Make in India</span>
 
                   <span className="mx-1 text-white/20">•</span>
 
-                  <span className="text-white/40">Coming Soon</span>
+                  <span className="text-white/40"> Project Coming Soon</span>
                 </p>
               </div>
 
