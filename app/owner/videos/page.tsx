@@ -17,7 +17,6 @@ type Video = {
   video_url: string;
   description: string;
   created_at: string;
-
   owner_id?: string;
   owner_name?: string;
   owner_email?: string;
@@ -43,36 +42,20 @@ export default function OwnerVideosPage() {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
   const [description, setDescription] = useState("");
-
   const [uploadProgress, setUploadProgress] = useState(0);
-
   const [uploading, setUploading] = useState(false);
-
   const [message, setMessage] = useState("");
-
   const [error, setError] = useState("");
-
   const [videos, setVideos] = useState<Video[]>([]);
-
   const [loadingVideos, setLoadingVideos] = useState(true);
-
   const [dragActive, setDragActive] = useState(false);
 
-  /*
-   * Clerk owner information
-   */
   const ownerEmail =
     user?.primaryEmailAddress?.emailAddress?.trim().toLowerCase() || "";
 
   const ownerName = user?.fullName || user?.firstName || "Owner";
 
-  /*
-   * -----------------------------------------
-   * LOAD VIDEOS
-   * -----------------------------------------
-   */
   const loadVideos = async () => {
     try {
       setLoadingVideos(true);
@@ -87,13 +70,11 @@ export default function OwnerVideosPage() {
 
       if (!contentType.includes("application/json")) {
         const text = await response.text();
-
         console.error(
           "VIDEOS API RETURNED NON JSON:",
           response.status,
           text.slice(0, 300),
         );
-
         throw new Error(`Videos API returned HTTP ${response.status}`);
       }
 
@@ -106,27 +87,18 @@ export default function OwnerVideosPage() {
       setVideos(Array.isArray(data.videos) ? data.videos : []);
     } catch (err) {
       console.error("LOAD VIDEOS ERROR:", err);
-
       setError(err instanceof Error ? err.message : "Failed to load videos");
     } finally {
       setLoadingVideos(false);
     }
   };
 
-  /*
-   * Load videos after Clerk is ready
-   */
   useEffect(() => {
     if (isLoaded) {
       loadVideos();
     }
   }, [isLoaded]);
 
-  /*
-   * -----------------------------------------
-   * FILE SELECT
-   * -----------------------------------------
-   */
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
@@ -139,48 +111,28 @@ export default function OwnerVideosPage() {
 
     if (!file.type.startsWith("video/")) {
       setError("Please select a valid video file.");
-
       event.target.value = "";
       setSelectedFile(null);
-
       return;
     }
 
     setSelectedFile(file);
   };
 
-  /*
-   * -----------------------------------------
-   * DRAG OVER
-   * -----------------------------------------
-   */
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-
     if (!uploading) {
       setDragActive(true);
     }
   };
 
-  /*
-   * -----------------------------------------
-   * DRAG LEAVE
-   * -----------------------------------------
-   */
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-
     setDragActive(false);
   };
 
-  /*
-   * -----------------------------------------
-   * DROP
-   * -----------------------------------------
-   */
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-
     setDragActive(false);
 
     if (uploading) {
@@ -198,7 +150,6 @@ export default function OwnerVideosPage() {
 
     if (!file.type.startsWith("video/")) {
       setError("Please drop a valid video file.");
-
       return;
     }
 
@@ -207,9 +158,7 @@ export default function OwnerVideosPage() {
     if (fileInputRef.current) {
       try {
         const dataTransfer = new DataTransfer();
-
         dataTransfer.items.add(file);
-
         fileInputRef.current.files = dataTransfer.files;
       } catch {
         // selectedFile is enough
@@ -217,32 +166,19 @@ export default function OwnerVideosPage() {
     }
   };
 
-  /*
-   * -----------------------------------------
-   * FILE SIZE
-   * -----------------------------------------
-   */
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) {
       return `${bytes} B`;
     }
-
     if (bytes < 1024 * 1024) {
       return `${(bytes / 1024).toFixed(1)} KB`;
     }
-
     if (bytes < 1024 * 1024 * 1024) {
       return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
     }
-
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
   };
 
-  /*
-   * -----------------------------------------
-   * IMAGEKIT AUTH
-   * -----------------------------------------
-   */
   const getUploadAuth = async (): Promise<UploadAuthResponse> => {
     if (!ownerEmail) {
       throw new Error(
@@ -252,11 +188,9 @@ export default function OwnerVideosPage() {
 
     const response = await fetch("/api/upload-auth", {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
       },
-
       body: JSON.stringify({
         ownerEmail,
       }),
@@ -266,13 +200,11 @@ export default function OwnerVideosPage() {
 
     if (!contentType.includes("application/json")) {
       const text = await response.text();
-
       console.error(
         "UPLOAD AUTH NON JSON:",
         response.status,
         text.slice(0, 300),
       );
-
       throw new Error(`Upload authentication returned HTTP ${response.status}`);
     }
 
@@ -289,11 +221,6 @@ export default function OwnerVideosPage() {
     return data;
   };
 
-  /*
-   * -----------------------------------------
-   * PUBLISH VIDEO
-   * -----------------------------------------
-   */
   const handleUpload = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -302,41 +229,24 @@ export default function OwnerVideosPage() {
     setError("");
     setMessage("");
 
-    /*
-     * Check Clerk
-     */
     if (!isLoaded) {
       setError("Authentication is still loading. Please wait.");
-
       return;
     }
 
-    /*
-     * Check owner
-     */
     if (!ownerEmail) {
       setError("Owner email was not found in your Clerk account.");
-
       return;
     }
 
-    /*
-     * Check file
-     */
     if (!selectedFile) {
       setError("Please select a video first.");
-
       return;
     }
 
-    /*
-     * Check description
-     */
     const cleanDescription = description.trim();
-
     if (!cleanDescription) {
       setError("Please add a description.");
-
       return;
     }
 
@@ -344,58 +254,31 @@ export default function OwnerVideosPage() {
       setUploading(true);
       setUploadProgress(0);
 
-      /*
-       * Abort controller
-       */
       const abortController = new AbortController();
-
       abortControllerRef.current = abortController;
 
-      /*
-       * STEP 1
-       * Get ImageKit authentication
-       */
       setMessage("Preparing secure upload...");
-
       console.log("1️⃣ Requesting ImageKit auth...");
-
       const auth = await getUploadAuth();
-
       console.log("✅ ImageKit auth received");
 
-      /*
-       * STEP 2
-       * Upload directly to ImageKit
-       */
       setMessage("Uploading video to ImageKit...");
-
       console.log("2️⃣ Uploading video to ImageKit...");
-
       const imageKitResponse = await upload({
         file: selectedFile,
-
         fileName: selectedFile.name,
-
         token: auth.token,
-
         expire: auth.expire,
-
         signature: auth.signature,
-
         publicKey: auth.publicKey,
-
         folder: "/videos",
-
         useUniqueFileName: true,
-
         onProgress: (event) => {
           if (event.total > 0) {
             const progress = (event.loaded / event.total) * 100;
-
             setUploadProgress(Math.min(100, Math.round(progress)));
           }
         },
-
         abortSignal: abortController.signal,
       });
 
@@ -405,26 +288,16 @@ export default function OwnerVideosPage() {
         throw new Error("ImageKit did not return a video URL.");
       }
 
-      /*
-       * STEP 3
-       * Save URL in Neon
-       */
       setMessage("Saving video to your library...");
-
       console.log("3️⃣ Saving video metadata...");
-
       const saveResponse = await fetch("/api/videos", {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
           ownerEmail,
-
           videoUrl: imageKitResponse.url,
-
           description: cleanDescription,
         }),
       });
@@ -433,13 +306,11 @@ export default function OwnerVideosPage() {
 
       if (!saveContentType.includes("application/json")) {
         const text = await saveResponse.text();
-
         console.error(
           "SAVE VIDEO NON JSON:",
           saveResponse.status,
           text.slice(0, 300),
         );
-
         throw new Error(`Video API returned HTTP ${saveResponse.status}`);
       }
 
@@ -453,14 +324,8 @@ export default function OwnerVideosPage() {
 
       console.log("✅ Video saved successfully");
 
-      /*
-       * STEP 4
-       * Reset form
-       */
       setUploadProgress(100);
-
       setMessage("Video published successfully.");
-
       setDescription("");
       setSelectedFile(null);
 
@@ -468,10 +333,6 @@ export default function OwnerVideosPage() {
         fileInputRef.current.value = "";
       }
 
-      /*
-       * STEP 5
-       * Refresh library
-       */
       await loadVideos();
     } catch (err) {
       console.error("❌ VIDEO UPLOAD ERROR:", err);
@@ -491,90 +352,61 @@ export default function OwnerVideosPage() {
       setMessage("");
     } finally {
       setUploading(false);
-
       abortControllerRef.current = null;
     }
   };
 
-  /*
-   * -----------------------------------------
-   * CANCEL
-   * -----------------------------------------
-   */
   const cancelUpload = () => {
     abortControllerRef.current?.abort();
   };
 
-  /*
-   * -----------------------------------------
-   * REMOVE FILE
-   * -----------------------------------------
-   */
   const removeSelectedFile = () => {
     if (uploading) {
       return;
     }
-
     setSelectedFile(null);
-
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  /*
-   * -----------------------------------------
-   * LOADING CLERK
-   * -----------------------------------------
-   */
   if (!isLoaded) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#050505] text-white">
         <div className="text-center">
           <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-white/10 border-t-white" />
-
           <p className="mt-4 text-sm text-white/40">Loading owner account...</p>
         </div>
       </main>
     );
   }
 
-  /*
-   * -----------------------------------------
-   * UI
-   * -----------------------------------------
-   */
   return (
-    <main className="min-h-screen bg-[#050505] px-4 py-28 text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#050505] px-4 py-24 text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         {/* HEADER */}
-        <header className="mb-10 flex flex-col gap-5 border-b border-white/10 pb-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="mb-3 flex items-center gap-2">
+        <header className="mb-8 flex flex-col gap-4 border-b border-white/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <div className="mb-2 flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
-
               <span className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">
                 Owner Studio
               </span>
             </div>
-
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               Video Library
             </h1>
-
-            <p className="mt-3 max-w-xl text-sm leading-6 text-white/45">
+            <p className="mt-2 text-sm leading-6 text-white/45">
               Upload your videos directly to ImageKit and publish them to your
               video library.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
+          <div className="flex-shrink-0 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
             <p className="text-[10px] uppercase tracking-[0.18em] text-white/30">
               Owner
             </p>
-
             <p className="mt-1 text-sm font-medium text-white">{ownerName}</p>
-
             <p className="mt-1 max-w-[260px] truncate text-xs text-white/35">
               {ownerEmail || "No primary email"}
             </p>
@@ -582,16 +414,16 @@ export default function OwnerVideosPage() {
         </header>
 
         {/* MAIN */}
-        <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[400px_1fr]">
           {/* UPLOAD */}
-          <section className="h-fit rounded-[28px] border border-white/10 bg-white/[0.035] p-5 shadow-2xl shadow-black/20 sm:p-6">
-            <div className="mb-6">
+          <section className="h-fit rounded-2xl border border-white/10 bg-white/[0.035] p-5 shadow-2xl shadow-black/20 sm:p-6">
+            <div className="mb-5">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/30">
                 Create
               </p>
-
-              <h2 className="mt-2 text-xl font-semibold">Publish a video</h2>
-
+              <h2 className="mt-2 text-lg font-semibold sm:text-xl">
+                Publish a video
+              </h2>
               <p className="mt-2 text-sm leading-6 text-white/40">
                 Select a video, add a description, and publish it.
               </p>
@@ -614,9 +446,9 @@ export default function OwnerVideosPage() {
                     }
                   }}
                   className={[
-                    "relative cursor-pointer overflow-hidden rounded-2xl border border-dashed p-6 text-center transition",
+                    "relative cursor-pointer overflow-hidden rounded-xl border border-dashed p-5 text-center transition-all duration-200",
                     dragActive
-                      ? "border-white/50 bg-white/[0.08]"
+                      ? "border-white/50 bg-white/[0.08] scale-[1.02]"
                       : "border-white/15 bg-black/20 hover:border-white/25 hover:bg-white/[0.03]",
                     uploading ? "cursor-not-allowed opacity-60" : "",
                   ].join(" ")}
@@ -632,7 +464,7 @@ export default function OwnerVideosPage() {
 
                   {!selectedFile ? (
                     <>
-                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05]">
+                      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05]">
                         <svg
                           viewBox="0 0 24 24"
                           fill="none"
@@ -646,23 +478,20 @@ export default function OwnerVideosPage() {
                           />
                         </svg>
                       </div>
-
                       <p className="mt-4 text-sm font-medium text-white">
                         Drop your video here
                       </p>
-
                       <p className="mt-1 text-xs text-white/35">
                         or click to browse
                       </p>
-
-                      <p className="mt-4 text-[11px] text-white/25">
+                      <p className="mt-3 text-[11px] text-white/25">
                         MP4 · MOV · WEBM · AVI · MKV
                       </p>
                     </>
                   ) : (
                     <div className="text-left">
                       <div className="flex items-start gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-black">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-black">
                           <svg
                             viewBox="0 0 24 24"
                             fill="none"
@@ -679,7 +508,6 @@ export default function OwnerVideosPage() {
                           <p className="truncate text-sm font-medium text-white">
                             {selectedFile.name}
                           </p>
-
                           <p className="mt-1 text-xs text-white/35">
                             {formatFileSize(selectedFile.size)}
                           </p>
@@ -692,9 +520,20 @@ export default function OwnerVideosPage() {
                               event.stopPropagation();
                               removeSelectedFile();
                             }}
-                            className="rounded-lg p-1.5 text-white/30 hover:bg-white/10 hover:text-white"
+                            className="rounded-lg p-1.5 text-white/30 transition-colors hover:bg-white/10 hover:text-white"
                           >
-                            ×
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              className="h-4 w-4"
+                            >
+                              <path
+                                d="M18 6L6 18M6 6L18 18"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              />
+                            </svg>
                           </button>
                         )}
                       </div>
@@ -720,7 +559,7 @@ export default function OwnerVideosPage() {
                   rows={5}
                   maxLength={1000}
                   placeholder="Tell people what this video is about..."
-                  className="w-full resize-none rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none placeholder:text-white/20 focus:border-white/30"
+                  className="w-full resize-none rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm leading-6 text-white outline-none placeholder:text-white/20 focus:border-white/30 focus:ring-1 focus:ring-white/10 transition-all duration-200"
                 />
 
                 <div className="mt-2 text-right text-[11px] text-white/25">
@@ -730,10 +569,9 @@ export default function OwnerVideosPage() {
 
               {/* PROGRESS */}
               {uploading && (
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-xs text-white/50">Uploading</span>
-
                     <span className="text-xs font-medium text-white">
                       {uploadProgress}%
                     </span>
@@ -751,7 +589,7 @@ export default function OwnerVideosPage() {
                   <button
                     type="button"
                     onClick={cancelUpload}
-                    className="mt-3 text-xs text-white/35 hover:text-white"
+                    className="mt-3 text-xs text-white/35 transition-colors hover:text-white"
                   >
                     Cancel upload
                   </button>
@@ -760,14 +598,14 @@ export default function OwnerVideosPage() {
 
               {/* ERROR */}
               {error && (
-                <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.06] px-4 py-3">
+                <div className="rounded-xl border border-red-500/20 bg-red-500/[0.06] px-4 py-3">
                   <p className="text-sm leading-5 text-red-300">{error}</p>
                 </div>
               )}
 
               {/* SUCCESS */}
               {message && !error && (
-                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.05] px-4 py-3">
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.05] px-4 py-3">
                   <p className="text-sm leading-5 text-emerald-300">
                     {message}
                   </p>
@@ -783,7 +621,7 @@ export default function OwnerVideosPage() {
                   !description.trim() ||
                   !ownerEmail
                 }
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3.5 text-sm font-semibold text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-semibold text-black transition-all duration-200 hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]"
               >
                 {uploading ? (
                   <>
@@ -793,7 +631,15 @@ export default function OwnerVideosPage() {
                 ) : (
                   <>
                     Publish video
-                    <span className="text-base">→</span>
+                    <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
+                      <path
+                        d="M5 12H19M19 12L12 5M19 12L12 19"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </>
                 )}
               </button>
@@ -802,13 +648,14 @@ export default function OwnerVideosPage() {
 
           {/* LIBRARY */}
           <section>
-            <div className="mb-5 flex items-end justify-between">
+            <div className="mb-4 flex items-end justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/30">
                   Library
                 </p>
-
-                <h2 className="mt-2 text-xl font-semibold">Published videos</h2>
+                <h2 className="mt-2 text-lg font-semibold sm:text-xl">
+                  Published videos
+                </h2>
               </div>
 
               <div className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-white/45">
@@ -818,44 +665,50 @@ export default function OwnerVideosPage() {
 
             {/* LOADING */}
             {loadingVideos ? (
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {[1, 2, 3, 4].map((item) => (
                   <div
                     key={item}
-                    className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]"
+                    className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]"
                   >
                     <div className="aspect-video animate-pulse bg-white/[0.05]" />
-
-                    <div className="space-y-3 p-5">
+                    <div className="space-y-3 p-4">
                       <div className="h-4 w-32 animate-pulse rounded bg-white/[0.06]" />
-
                       <div className="h-3 w-full animate-pulse rounded bg-white/[0.05]" />
-
                       <div className="h-3 w-2/3 animate-pulse rounded bg-white/[0.05]" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : videos.length === 0 ? (
-              <div className="flex min-h-[400px] flex-col items-center justify-center rounded-[28px] border border-dashed border-white/10 bg-white/[0.02] px-6 text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
-                  ▶
+              <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="h-6 w-6 text-white/40"
+                  >
+                    <path
+                      d="M8 5.5L18 12L8 18.5V5.5Z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </div>
-
                 <h3 className="mt-5 text-sm font-medium text-white">
                   No videos yet
                 </h3>
-
                 <p className="mt-2 max-w-sm text-sm leading-6 text-white/35">
                   Upload your first video and it will appear here.
                 </p>
               </div>
             ) : (
-              <div className="grid gap-5 md:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {videos.map((video) => (
                   <article
                     key={video.id}
-                    className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] transition hover:border-white/20"
+                    className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] transition-all duration-200 hover:border-white/20 hover:shadow-lg hover:shadow-black/20"
                   >
                     <div className="relative aspect-video overflow-hidden bg-black">
                       <video
@@ -868,12 +721,12 @@ export default function OwnerVideosPage() {
                       </video>
                     </div>
 
-                    <div className="p-5">
+                    <div className="p-4">
                       <p className="line-clamp-3 text-sm leading-6 text-white/55">
                         {video.description}
                       </p>
 
-                      <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                      <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
                         <span className="text-[11px] text-white/25">
                           {new Date(video.created_at).toLocaleDateString(
                             undefined,

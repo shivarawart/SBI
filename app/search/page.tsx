@@ -767,98 +767,103 @@ export default function HomePage() {
             {/* Visitor */}
           </section>
 
-          <div className="absolute inset-x-0 bottom-0 z-20 px-2 pb-2 sm:px-4">
-            <div
-              className="
-      mx-auto flex w-full max-w-5xl
-      items-center
-      gap-1.5 sm:gap-2.5
-    "
-            >
-              {/* ───────────── AUDIO ───────────── */}
-              <div
-                className="
-        flex h-8 min-w-0 flex-1
-        items-center
-rounded-full
-   
-        sm:h-9 sm:px-3
-      "
-              >
-                <div className="mr-1.5 flex h-8 w-4 shrink-0 items-center justify-center rounded-xl bg-white/[0.06] sm:mr-2">
-                  <span className="text-[8px] text-white/60 sm:text-[9px]">
-                    ♪
-                  </span>
-                </div>        
+          <div className="absolute inset-x-0 bottom-0 z-20 px-4 pb-4 sm:px-6 lg:px-8">
+            <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+              {/* ───────────── AUDIO PLAYER ───────────── */}
+              <div className="flex w-full sm:w-auto sm:flex-1">
+                <div className="group relative flex w-full items-center gap-2 overflow-hidden rounded-full bg-white/70 px-3 py-2 shadow-sm shadow-gray-200/40 backdrop-blur-xl ring-1 ring-gray-200/60 transition-all duration-300 hover:shadow-md hover:shadow-gray-300/50 hover:ring-gray-300 sm:max-w-xs">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-rose-400 to-pink-500 shadow-sm shadow-rose-200 transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="h-3.5 w-3.5 text-white"
+                    >
+                      <path
+                        d="M9 18V5l12-2v13"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <circle cx="6" cy="18" r="3" fill="currentColor" />
+                      <circle cx="18" cy="16" r="3" fill="currentColor" />
+                    </svg>
+                  </div>
 
-                <audio
-                  controls
-                  preload="metadata"
-                  className="
-           min-w-0 w-full h-full
-          opacity-65
-          rounded-xl
-          transition-opacity duration-300
-          hover:opacity-100
-
-        "
-                >
-                  <source src="/audia/vishavguru.mp3" type="audio/mpeg" />
-                  Your browser does not support the audio element.
-                </audio>
+                  <audio
+                    controls
+                    preload="metadata"
+                    className="min-w-0 flex-1 h-6 [&::-webkit-media-controls]:flex-1 [&::-webkit-media-controls-panel]:bg-gray-100/80 [&::-webkit-media-controls-play-button]:hover:scale-105 [&::-webkit-media-controls-current-time-display]:text-gray-600 [&::-webkit-media-controls-time-remaining-display]:text-gray-600"
+                  >
+                    <source src="/audia/vishavguru.mp3" type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
               </div>
 
-              {/* ───────────── PROJECT STATUS ───────────── */}
-              <div
-                className="
-        flex h-8 min-w-0 flex-1
-        items-center justify-center
-       rounded-xl
-        border border-white/[0.08]
-        bg-black/60
-        px-2
-        backdrop-blur-2xl
-        shadow-[0_8px_30px_rgba(0,0,0,0.35)]
-        transition-all duration-300
-        hover:border-white/[0.16]
-        hover:bg-black/75
-        sm:h-9 sm:px-3
-      "
-              >
-                <span className="relative mr-1.5 flex h-1.5 w-1.5 shrink-0 sm:mr-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/40" />
-                  <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                </span>
-
-                <p className="min-w-0 truncate text-[8px] font-medium tracking-[0.03em] text-white/50 sm:text-[10px]">
-                  <span className="font-semibold text-white/85">
-                    Vishvaguru
+              {/* ───────────── STATUS TAG ───────────── */}
+              <div className="flex w-full justify-center sm:w-auto sm:flex-1">
+                <div className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-2 shadow-sm shadow-emerald-200/50 backdrop-blur-xl ring-1 ring-emerald-200/60 transition-all duration-300 hover:shadow-md hover:shadow-emerald-300/60 hover:ring-emerald-300 hover:-translate-y-0.5">
+                  <span className="relative flex h-2 w-2 shrink-0">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/50" />
+                    <span className="relative h-2 w-2 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-sm shadow-emerald-200" />
                   </span>
 
-                  <span className="mx-1 text-white/20">•</span>
-
-                  <span className="text-emerald-400/90">Under Make in India</span>
-
-                  <span className="mx-1 text-white/20">•</span>
-
-                  <span className="text-white/40"> Project Coming Soon</span>
-                </p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold text-gray-900 tracking-tight">
+                      Vishvaguru
+                    </span>
+                    <span className="text-gray-300">·</span>
+                    <span className="inline-flex items-center rounded-full bg-white/70 px-2 py-0.5">
+                      <span className="text-[10px] font-semibold text-emerald-700 tracking-wide uppercase">
+                        Make in India Project
+                      </span>
+                    </span>
+                    <span className="text-gray-300">·</span>
+                    <span className="inline-flex items-center rounded-full bg-amber-100/70 px-2 py-0.5">
+                      <span className="text-[10px] font-medium text-amber-700 tracking-wide">
+                        Coming Soon
+                      </span>
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              {/* ───────────── VISITOR ───────────── */}
-              <div
-                className="
-        flex h-8 min-w-0 flex-1
-        items-center justify-center
-          rounded-full
-       
-        sm:h-9 sm:px-3
-      "
-              >
-                {/* <Visitor /> */}
+              {/* ───────────── VISITOR COUNTER ───────────── */}
+              <div className="flex w-full justify-end sm:w-auto sm:flex-1">
+                <div className="group inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 shadow-sm shadow-gray-200/50 backdrop-blur-xl ring-1 ring-gray-200/70 transition-all duration-300 hover:shadow-md hover:shadow-gray-300/60 hover:ring-gray-300 hover:-translate-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <div className="flex -space-x-1.5">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 ring-2 ring-white shadow-sm">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="h-3 w-3 text-white"
+                        >
+                          <path
+                            d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <circle
+                            cx="12"
+                            cy="7"
+                            r="4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    </div>
 
-                <div className="flex min-w-0 w-full items-center gap-1.5">
-                  <Visitor />
+                    <div className="flex items-center gap-1.5 border-l border-gray-200 pl-2">
+                      <Visitor />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
