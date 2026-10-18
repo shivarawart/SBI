@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "./components/Navbar";
-import WhatsAppWidget from "./components/WhatsAppWidget";
+// import WhatsAppWidget from "./components/WhatsAppWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +31,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Navbar />
 
           <main className="relative min-h-screen w-full ">
+        
             {children}
-            <WhatsAppWidget
-              phoneNumber="+7988256574"
-              message="Hello, I have a question about your services."
-              brandName="VishavGuru"
-              subtitle="We typically reply as soon as possible."
-            />
+            
           </main>
         </ClerkProvider>
       </body>
